@@ -16,7 +16,7 @@ class PeriodicApp:
         self.memory_size = memory_size
         self.target_fidelity = target_fidelity
 
-        # request tracking
+        # request tracking, for each temporal windwos i want to save the request results and the metadata (e.g. delivery times, fidelities, etc.) that will be used in RRL model 
         self.request_id = 0
         self.active_requests = {}   # req_id -> dict with metadata
         self.history = []           # list of completed requests
@@ -29,7 +29,7 @@ class PeriodicApp:
         req_id = self.request_id
 
         start_time = now + int(1e12)
-        end_time = now + int(2e12)
+        end_time = now + int(1.5e12)
 
         self.active_requests[req_id] = {
             "request_id": req_id,
@@ -39,14 +39,15 @@ class PeriodicApp:
             "approved": None,
             "delivered_pairs": 0,
             "fidelities": [],
-            "delivery_times_ps": []
-        }
+            "delivery_times_ps": [],
+            "counted_memories": set()
+        } # initialize the request metadata
 
         print(
             f"\n===== REQUEST {req_id} CREATED at {now * 1e-12:.6f}s "
             f"(window: {start_time * 1e-12:.6f}s → {end_time * 1e-12:.6f}s) ====="
         )
-
+        #same part of previous experiment 
         nm = self.node.network_manager
         nm.request(
             self.other,
@@ -63,12 +64,11 @@ class PeriodicApp:
 
         # schedule next request 2 seconds later
         next_process = Process(self, "start", [])
-        next_event = Event(now + int(2e12), next_process)
+        next_event = Event(now + int(1e12), next_process)
         self.node.timeline.schedule(next_event)
 
-    def get_reservation_result(self, _reservation, result: bool):
-        now_ps = self.node.timeline.now()
-        now_s = now_ps * 1e-12
+    def get_reservation_result(self, _reservation, result: bool): 
+        now_s = self.node.timeline.now() * 1e-12
 
         # associate the reservation result with the latest request that has approved=None
         pending_ids = [rid for rid, data in self.active_requests.items() if data["approved"] is None]
@@ -84,12 +84,33 @@ class PeriodicApp:
         else:
             print(f"[{now_s:.6f}s] Reservation FAILED for request {req_id}")
 
-    def get_memory(self, info):
+    """
+            Application
+            │
+            │ nm.request()
+            ▼
+            Network Manager
+            │
+            │ send the rsvp request among the path
+            ▼
+            Router1 → Router2 → Router3
+            │
+            │ all of the router accept o one can refuse
+            ▼
+            routers reply to the network manager of origin 
+            │
+            ▼
+            Application.get_reservation_result()
+            │
+            ▼
+            If the reservation is approved, the request is sent to resource manager install the rule and the action (generation, purification, swapping) and after call the get_memory() 
+                """
+    def get_memory(self, info: "MemoryInfo"):
         """
         Called by the Resource Manager when a memory state is updated.
         We attribute the delivered pair to the currently active request window.
         """
-        if info.state == "ENTANGLED" and info.remote_node == self.other:
+        if info.remote_node == self.other and info.fidelity > 0 and info.state != "RAW":
             now_ps = self.node.timeline.now()
             now_s = now_ps * 1e-12
 
@@ -107,6 +128,9 @@ class PeriodicApp:
             else:
                 req_id = min(candidate_ids)
                 req_data = self.active_requests[req_id]
+                if info.index in req_data["counted_memories"]: 
+                    return
+                req_data["counted_memories"].add(info.index)
                 req_data["delivered_pairs"] += 1
                 req_data["fidelities"].append(info.fidelity)
                 req_data["delivery_times_ps"].append(now_ps)
@@ -122,7 +146,7 @@ class PeriodicApp:
 
     def finalize_request(self, req_id: int):
         """
-        Called at the end of the reservation window to print a summary.
+        Called at the end of the reservation window to print a summary, because i want to see the result of each request as soon as it's completed and not wait until the end of the simulation to have all the summary.
         """
         if req_id not in self.active_requests:
             return
@@ -201,7 +225,7 @@ class PeriodicApp:
 def set_parameters(topology: RouterNetTopo):
     # ---------- memory parameters ----------
     MEMO_FREQ = 20e3 # The frequency at which the quantum memories can attempt to generate entanglement (20 kHz)
-    MEMO_EXPIRE = 1 #For now, the dechoerence is set to 0 so the entanglement doesn't expire. Next step is to give more complexity!!
+    MEMO_EXPIRE = 0.2 #For now, the dechoerence is set to 0 so the entanglement doesn't expire. Next step is to give more complexity!!
     MEMO_EFFICIENCY = 0.6 # The probability that an attempt to generate entanglement succeeds (100% efficiency for this first experiment, next step will provides more realistic parameters)
     MEMO_FIDELITY = 0.9349367588934053 #initial fidelity
 
@@ -266,7 +290,7 @@ def main():
     sophia = routers["sophia"]
 
     # application on valrose requesting end-to-end entanglement with sophia
-    app = PeriodicApp(valrose, "sophia", memory_size=25, target_fidelity=0.9)
+    app = PeriodicApp(valrose, "sophia", memory_size=25, target_fidelity=0.7)
 
     # start the first application event at time 0
     first_process = Process(app, "start", [])
