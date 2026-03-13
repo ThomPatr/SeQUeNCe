@@ -28,8 +28,8 @@ class PeriodicApp:
         self.request_id += 1
         req_id = self.request_id
 
-        start_time = now + int(1e12)
-        end_time = now + int(1.5e12)
+        start_time = now + int(5e11)
+        end_time = now + int(1e12)
 
         self.active_requests[req_id] = {
             "request_id": req_id,
@@ -45,7 +45,7 @@ class PeriodicApp:
 
         print(
             f"\n===== REQUEST {req_id} CREATED at {now * 1e-12:.6f}s "
-            f"(window: {start_time * 1e-12:.6f}s → {end_time * 1e-12:.6f}s) ====="
+            f"(window: {start_time * 1e-12:.6f}s -> {end_time * 1e-12:.6f}s) ====="
         )
         #same part of previous experiment 
         nm = self.node.network_manager
@@ -64,7 +64,7 @@ class PeriodicApp:
 
         # schedule next request 2 seconds later
         next_process = Process(self, "start", [])
-        next_event = Event(now + int(1e12), next_process)
+        next_event = Event(now + int(3e11), next_process)
         self.node.timeline.schedule(next_event)
 
     def get_reservation_result(self, _reservation, result: bool): 
@@ -136,7 +136,7 @@ class PeriodicApp:
                 req_data["delivery_times_ps"].append(now_ps)
 
                 print(
-                    f"[{now_s:.6f}s] Request {req_id} -> delivered pair "
+                    f"[{now_s:.6f}s] Request {req_id} => delivered pair "
                     f"{req_data['delivered_pairs']}/{self.memory_size} "
                     f"(memory={info.index}, fidelity={info.fidelity:.6f})"
                 )
@@ -224,10 +224,10 @@ class PeriodicApp:
 
 def set_parameters(topology: RouterNetTopo):
     # ---------- memory parameters ----------
-    MEMO_FREQ = 20e3 # The frequency at which the quantum memories can attempt to generate entanglement (20 kHz)
-    MEMO_EXPIRE = 0.2 #For now, the dechoerence is set to 0 so the entanglement doesn't expire. Next step is to give more complexity!!
-    MEMO_EFFICIENCY = 0.6 # The probability that an attempt to generate entanglement succeeds (100% efficiency for this first experiment, next step will provides more realistic parameters)
-    MEMO_FIDELITY = 0.9349367588934053 #initial fidelity
+    MEMO_FREQ = 8e3 # The frequency at which the quantum memories can attempt to generate entanglement (20 kHz)
+    MEMO_EXPIRE = 0.05 #For now, the dechoerence is set to 0 so the entanglement doesn't expire. Next step is to give more complexity!!
+    MEMO_EFFICIENCY = 0.45 # The probability that an attempt to generate entanglement succeeds (100% efficiency for this first experiment, next step will provides more realistic parameters)
+    MEMO_FIDELITY = 0.90 #initial fidelity
 
     for node in topology.get_nodes_by_type(RouterNetTopo.QUANTUM_ROUTER): #setting parameters for all the quantum routers in the topology
         memory_array = node.get_components_by_type("MemoryArray")[0]
@@ -237,10 +237,10 @@ def set_parameters(topology: RouterNetTopo):
         memory_array.update_memory_params("raw_fidelity", MEMO_FIDELITY)
 
     # ---------- detector parameters ----------
-    DETECTOR_EFFICIENCY = 0.7 # The probability that a photon arriving at the detector is successfully detected (90% efficiency for this first experiment); P(detected|photon arrives) = 0.9
+    DETECTOR_EFFICIENCY = 0.55 # The probability that a photon arriving at the detector is successfully detected (90% efficiency for this first experiment); P(detected|photon arrives) = 0.9
     #Remember that the generation require two photons to be detected, so the overall success probability of generating an entangled pair is the product of the efficiencies of the two detectors: P(success) = P(detected|photon arrives)^2 = 0.9^2 = 0.81 (81% success probability for generating an entangled pair in this first experiment)
-    DETECTOR_COUNT_RATE = 5e7 # The maximum rate at which the detector can register photons (50 million counts per second for this first experiment); 
-    DETECTOR_RESOLUTION = 10 # temporal resolution of the detctor in picoseconds (100 ps for this first experiment)
+    DETECTOR_COUNT_RATE = 2e7 # The maximum rate at which the detector can register photons (50 million counts per second for this first experiment); 
+    DETECTOR_RESOLUTION = 50 # temporal resolution of the detctor in picoseconds (100 ps for this first experiment)
 
     for node in topology.get_nodes_by_type(RouterNetTopo.BSM_NODE):
         bsm = node.get_components_by_type("SingleAtomBSM")[0]
@@ -249,8 +249,8 @@ def set_parameters(topology: RouterNetTopo):
         bsm.update_detectors_params("time_resolution", DETECTOR_RESOLUTION)
 
     # ---------- quantum channel parameters ----------
-    ATTENUATION = 0.00018  # the absorbtion probability per kilometer of the quantum channel (for this first experiment, we set it to a very low value to ensure that we can generate enough entanglement)
-    QC_FREQ = 1e7 # maximum frequency at which the quantum channel can be used to attempt to generate entanglement (10^11 events/s)
+    ATTENUATION = 0.00025  # the absorbtion probability per kilometer of the quantum channel (for this first experiment, we set it to a very low value to ensure that we can generate enough entanglement)
+    QC_FREQ = 5e6 # maximum frequency at which the quantum channel can be used to attempt to generate entanglement (10^11 events/s)
 
     for qc in topology.get_qchannels():
         qc.attenuation = ATTENUATION
@@ -290,7 +290,7 @@ def main():
     sophia = routers["sophia"]
 
     # application on valrose requesting end-to-end entanglement with sophia
-    app = PeriodicApp(valrose, "sophia", memory_size=25, target_fidelity=0.7)
+    app = PeriodicApp(valrose, "sophia", memory_size=5, target_fidelity=0.75)
 
     # start the first application event at time 0
     first_process = Process(app, "start", [])

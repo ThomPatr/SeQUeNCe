@@ -1,9 +1,9 @@
 {
     "stop_time": 10000000000000, 
      "nodes": [
-    { "name": "valrose",        "type": "QuantumRouter", "seed":  1, "memo_size": 50 },
-    { "name": "ecov",           "type": "QuantumRouter", "seed":  2, "memo_size": 100 },
-    { "name": "sophia",         "type": "QuantumRouter", "seed":  3, "memo_size": 50 }
+    { "name": "valrose",        "type": "QuantumRouter", "seed":  1, "memo_size": 20 },
+    { "name": "ecov",           "type": "QuantumRouter", "seed":  2, "memo_size": 30 },
+    { "name": "sophia",         "type": "QuantumRouter", "seed":  3, "memo_size": 20 }
   ],
   "qconnections": [
   { "node1":"valrose","node2":"ecov",   "attenuation":0.00018, "distance": 9100,  "type": "meet_in_the_middle" },
