@@ -1,7 +1,7 @@
 from pathlib import Path
 
 NETWORK_CONFIG = Path(
-    r"C:\Users\thoma\OneDrive\Desktop\Double degree\Internship\Internsheep\Simulator\SeQUeNCe\simulator\ideal_topo_star.json"
+    r"C:\Users\thoma\OneDrive\Desktop\Double degree\Internship\Internsheep\Simulator\SeQUeNCe\simulator\fifth_simulation\topology\topo_star.json"
 )
 
 PERIPHERAL_NODES = ["valrose", "sophia", "antibes", "grasse"]
@@ -30,11 +30,11 @@ TRAFFIC_MATRIX = {
 }
 
 NODE_HW = {
-    "valrose": {"memo_freq": 8e3, "memo_expire": 0.05,  "memo_eff": 0.45, "base_fidelity": 0.90},
-    "ecov":    {"memo_freq": 8e3, "memo_expire": 0.06,  "memo_eff": 0.47, "base_fidelity": 0.91},
-    "sophia":  {"memo_freq": 8e3, "memo_expire": 0.05,  "memo_eff": 0.46, "base_fidelity": 0.90},
-    "antibes": {"memo_freq": 8e3, "memo_expire": 0.045, "memo_eff": 0.44, "base_fidelity": 0.89},
-    "grasse":  {"memo_freq": 8e3, "memo_expire": 0.04,  "memo_eff": 0.42, "base_fidelity": 0.88},
+    "valrose": {"memo_freq": 8e3, "memo_expire": 0.05,  "memo_eff": 0.45, "base_fidelity": 0.90, "memo_stdev": 0.010},
+    "ecov":    {"memo_freq": 8e3, "memo_expire": 0.06,  "memo_eff": 0.47, "base_fidelity": 0.91, "memo_stdev": 0.012},
+    "sophia":  {"memo_freq": 8e3, "memo_expire": 0.05,  "memo_eff": 0.46, "base_fidelity": 0.90, "memo_stdev": 0.010},
+    "antibes": {"memo_freq": 8e3, "memo_expire": 0.045, "memo_eff": 0.44, "base_fidelity": 0.89, "memo_stdev": 0.009},
+    "grasse":  {"memo_freq": 8e3, "memo_expire": 0.04,  "memo_eff": 0.42, "base_fidelity": 0.88, "memo_stdev": 0.008},
 }
 
 BSM_HW = {
@@ -63,5 +63,5 @@ LINK_PHYSICS = {
 }
 
 PHYSICAL_LINKS = set(LINK_PHYSICS.keys())
-
+MEMORY_MODEL= "random"  # "deterministic" or "random"
 QC_FREQ = 5e6

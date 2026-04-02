@@ -5,13 +5,18 @@ from apps.node_traffic_app import NodeTrafficApp
 from physics.parameters import set_parameters
 from instrumentation.tracking import patch_generation_classes, instrument_resource_managers
 from reporting.statistics import compute_node_flow_statistics, compute_link_physics_statistics
-
+from sequence.components import memory
+from topology.custom_memory_array import CustomMemoryArray
 
 def main():
+    memory.MemoryArray = CustomMemoryArray  # Patch the MemoryArray class used in the topology with our custom version
     network_topo = RouterNetTopo(str(NETWORK_CONFIG))
     tl = network_topo.get_timeline()
 
-    set_parameters(network_topo)
+    set_parameters(network_topo, use_random_coherence=True)
+    for node in network_topo.get_nodes_by_type(RouterNetTopo.QUANTUM_ROUTER):
+        memory_array = node.get_components_by_type("MemoryArray")[0]
+        print(f"{node.name}: {type(memory_array[0])}")
 
     routers = {
         node.name: node

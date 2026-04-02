@@ -1,10 +1,13 @@
 from sequence.topology.router_net_topo import RouterNetTopo
-
+from sequence.components.memory import MemoryWithRandomCoherenceTime
 from config import NODE_HW, BSM_HW, LINK_PHYSICS, QC_FREQ
 from physics.link_utils import endpoint_name, logical_link_from_qchannel, effective_attenuation_db_per_km
 
 
-def set_parameters(topology: RouterNetTopo):
+
+
+def set_parameters(topology: RouterNetTopo, use_random_coherence: bool = True):
+
     for node in topology.get_nodes_by_type(RouterNetTopo.QUANTUM_ROUTER):
         hw = NODE_HW[node.name]
         memory_array = node.get_components_by_type("MemoryArray")[0]
@@ -13,7 +16,9 @@ def set_parameters(topology: RouterNetTopo):
         memory_array.update_memory_params("coherence_time", hw["memo_expire"])
         memory_array.update_memory_params("efficiency", hw["memo_eff"])
         memory_array.update_memory_params("raw_fidelity", hw["base_fidelity"])
-
+        for memory in memory_array:
+            if hasattr(memory, "coherence_time_stedv"):
+                memory.coherence_time_stdev = hw["memo_stdev"]
         print(
             f"[SETUP] Node {node.name}: "
             f"freq={hw['memo_freq']}, "
