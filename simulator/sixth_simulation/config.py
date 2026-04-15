@@ -1,31 +1,31 @@
 from pathlib import Path
 
 NETWORK_CONFIG = Path(
-    r"C:\Users\thoma\OneDrive\Desktop\Double degree\Internship\Internsheep\Simulator\SeQUeNCe\simulator\fifth_simulation\topology\ideal_topo_star.json"
+    r"C:\Users\thoma\OneDrive\Desktop\Double degree\Internship\Internsheep\Simulator\SeQUeNCe\simulator\sixth_simulation\topology\ideal_topo_star.json"
 )
 
 PERIPHERAL_NODES = ["valrose", "sophia", "antibes", "grasse"]
 
 TRAFFIC_MATRIX = {
     "valrose": {
-        "sophia":  {"interval_s": 1.0, "memory_size": 5, "target_fidelity": 0.75},
-        "antibes": {"interval_s": 1.4, "memory_size": 4, "target_fidelity": 0.75},
-        "grasse":  {"interval_s": 1.8, "memory_size": 3, "target_fidelity": 0.75},
+        "sophia":  {"interval_s": 1.0, "memory_size": 1, "target_fidelity": 0.75},
+        "antibes": {"interval_s": 1.4, "memory_size": 1, "target_fidelity": 0.75},
+        "grasse":  {"interval_s": 1.8, "memory_size": 1, "target_fidelity": 0.75},
     },
     "sophia": {
-        "valrose": {"interval_s": 1.1, "memory_size": 5, "target_fidelity": 0.75},
-        "antibes": {"interval_s": 1.2, "memory_size": 5, "target_fidelity": 0.75},
-        "grasse":  {"interval_s": 1.6, "memory_size": 4, "target_fidelity": 0.75},
+        "valrose": {"interval_s": 1.1, "memory_size": 1, "target_fidelity": 0.75},
+        "antibes": {"interval_s": 1.2, "memory_size": 1, "target_fidelity": 0.75},
+        "grasse":  {"interval_s": 1.6, "memory_size": 1, "target_fidelity": 0.75},
     },
     "antibes": {
-        "valrose": {"interval_s": 1.5, "memory_size": 4, "target_fidelity": 0.75},
-        "sophia":  {"interval_s": 1.0, "memory_size": 5, "target_fidelity": 0.75},
-        "grasse":  {"interval_s": 1.3, "memory_size": 5, "target_fidelity": 0.75},
+        "valrose": {"interval_s": 1.5, "memory_size": 1, "target_fidelity": 0.75},
+        "sophia":  {"interval_s": 1.0, "memory_size": 1, "target_fidelity": 0.75},
+        "grasse":  {"interval_s": 1.3, "memory_size": 1, "target_fidelity": 0.75},
     },
     "grasse": {
-        "valrose": {"interval_s": 1.0, "memory_size": 5, "target_fidelity": 0.75},
-        "sophia":  {"interval_s": 1.7, "memory_size": 4, "target_fidelity": 0.75},
-        "antibes": {"interval_s": 1.4, "memory_size": 4, "target_fidelity": 0.75},
+        "valrose": {"interval_s": 1.0, "memory_size": 1, "target_fidelity": 0.75},
+        "sophia":  {"interval_s": 1.7, "memory_size": 1, "target_fidelity": 0.75},
+        "antibes": {"interval_s": 1.4, "memory_size": 1, "target_fidelity": 0.75},
     }
 }
 

@@ -1,6 +1,6 @@
 {
   "is_parallel": false,
-  "stop_time": 300000000000000,
+  "stop_time": 50000000000000,
   "nodes": [
     { "name": "valrose", "type": "QuantumRouter", "seed": 1, "memo_size": 20 },
     { "name": "ecov",    "type": "QuantumRouter", "seed": 2, "memo_size": 30 },

@@ -13,7 +13,9 @@ def main():
     # Patch the MemoryArray class used in the topology with our custom version
     network_topo = RouterNetTopo(str(NETWORK_CONFIG))
     tl = network_topo.get_timeline()
-
+    print(f"[DEBUG] config file = {NETWORK_CONFIG}")
+    print(f"[DEBUG] timeline stop_time (ps) = {tl.stop_time}")
+    print(f"[DEBUG] timeline stop_time (s) = {tl.stop_time * 1e-12}")
     set_parameters(network_topo)
     
     for node in network_topo.get_nodes_by_type(RouterNetTopo.QUANTUM_ROUTER):
@@ -31,7 +33,7 @@ def main():
             node=routers[node_name],
             traffic_demands=TRAFFIC_MATRIX[node_name],
             start_offset_s=0.2 * i,
-            max_requests_per_flow=4
+            parallel_sessions_per_flow=2
         )
         app.schedule_initial_events()
         apps.append(app)
