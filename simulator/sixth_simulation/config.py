@@ -63,5 +63,5 @@ LINK_PHYSICS = {
 }
 
 PHYSICAL_LINKS = set(LINK_PHYSICS.keys())
-MEMORY_MODEL= "deterministic"  # "deterministic" or "random"
+MEMORY_MODEL= "random"  # "deterministic" or "random"
 QC_FREQ = 5e6

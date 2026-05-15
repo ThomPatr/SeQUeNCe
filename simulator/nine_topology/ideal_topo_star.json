@@ -1,0 +1,57 @@
+{
+  "is_parallel": false,
+  "stop_time": 300000000000000,
+
+  "nodes": [
+    { "name": "valrose", "type": "QuantumRouter", "seed": 1, "memo_size": 30 },
+    { "name": "nice",    "type": "QuantumRouter", "seed": 2, "memo_size": 30 },
+    { "name": "cagnes",  "type": "QuantumRouter", "seed": 3, "memo_size": 30 },
+    { "name": "antibes", "type": "QuantumRouter", "seed": 4, "memo_size": 30 },
+    { "name": "sophia",  "type": "QuantumRouter", "seed": 5, "memo_size": 40 },
+    { "name": "grasse",  "type": "QuantumRouter", "seed": 6, "memo_size": 30 },
+    { "name": "cannes",  "type": "QuantumRouter", "seed": 7, "memo_size": 30 },
+    { "name": "ecov",    "type": "QuantumRouter", "seed": 8, "memo_size": 35 },
+    { "name": "monaco",  "type": "QuantumRouter", "seed": 9, "memo_size": 30 },
+    { "name": "menton",  "type": "QuantumRouter", "seed": 10, "memo_size": 30 }
+  ],
+
+  "qconnections": [
+    { "node1": "valrose", "node2": "nice",    "attenuation": 0.00020, "distance": 6000,  "type": "meet_in_the_middle" },
+    { "node1": "nice",    "node2": "cagnes",  "attenuation": 0.00020, "distance": 11000, "type": "meet_in_the_middle" },
+    { "node1": "cagnes",  "node2": "antibes", "attenuation": 0.00020, "distance": 9000,  "type": "meet_in_the_middle" },
+    { "node1": "antibes", "node2": "sophia",  "attenuation": 0.00020, "distance": 11200, "type": "meet_in_the_middle" },
+
+    { "node1": "sophia",  "node2": "grasse",  "attenuation": 0.00028, "distance": 14500, "type": "meet_in_the_middle" },
+    { "node1": "sophia",  "node2": "ecov",    "attenuation": 0.00022, "distance": 22000, "type": "meet_in_the_middle" },
+    { "node1": "ecov",    "node2": "cannes",  "attenuation": 0.00023, "distance": 16000, "type": "meet_in_the_middle" },
+    { "node1": "cannes",  "node2": "antibes", "attenuation": 0.00021, "distance": 12000, "type": "meet_in_the_middle" },
+
+    { "node1": "nice",    "node2": "monaco",  "attenuation": 0.00021, "distance": 21000, "type": "meet_in_the_middle" },
+    { "node1": "monaco",  "node2": "menton",  "attenuation": 0.00022, "distance": 11000, "type": "meet_in_the_middle" },
+    { "node1": "menton",  "node2": "sophia",  "attenuation": 0.00024, "distance": 34000, "type": "meet_in_the_middle" },
+
+    { "node1": "cagnes",  "node2": "cannes",  "attenuation": 0.00022, "distance": 17000, "type": "meet_in_the_middle" },
+    { "node1": "nice",    "node2": "sophia",  "attenuation": 0.00019, "distance": 26000, "type": "meet_in_the_middle" },
+    { "node1": "cannes",  "node2": "menton",  "attenuation": 0.00023, "distance": 46400, "type": "meet_in_the_middle" }
+  ],
+
+  "cconnections": [
+    { "node1": "valrose", "node2": "nice",    "delay": 50000000 },
+    { "node1": "nice",    "node2": "cagnes",  "delay": 70000000 },
+    { "node1": "cagnes",  "node2": "antibes", "delay": 60000000 },
+    { "node1": "antibes", "node2": "sophia",  "delay": 66850746 },
+
+    { "node1": "sophia",  "node2": "grasse",  "delay": 83012126 },
+    { "node1": "sophia",  "node2": "ecov",    "delay": 119742536 },
+    { "node1": "ecov",    "node2": "cannes",  "delay": 100000000 },
+    { "node1": "cannes",  "node2": "antibes", "delay": 80000000 },
+
+    { "node1": "nice",    "node2": "monaco",  "delay": 120000000 },
+    { "node1": "monaco",  "node2": "menton",  "delay": 70000000 },
+    { "node1": "menton",  "node2": "sophia",  "delay": 180000000 },
+
+    { "node1": "cagnes",  "node2": "cannes",  "delay": 90000000 },
+    { "node1": "nice",    "node2": "sophia",  "delay": 138352611 },
+    { "node1": "cannes",    "node2": "menton",  "delay": 246906198 }
+  ]
+}

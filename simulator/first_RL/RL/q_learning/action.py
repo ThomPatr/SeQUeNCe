@@ -1,0 +1,7 @@
+WAIT = 0
+SWAP = 1
+
+ACTION_NAMES = {
+    WAIT: "WAIT",
+    SWAP: "SWAP",
+}
