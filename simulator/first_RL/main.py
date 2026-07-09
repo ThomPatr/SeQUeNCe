@@ -17,11 +17,7 @@ def main():
     print(f"[DEBUG] config file = {NETWORK_CONFIG}")
     print(f"[DEBUG] timeline stop_time (ps) = {tl.stop_time}")
     print(f"[DEBUG] timeline stop_time (s) = {tl.stop_time * 1e-12}")
-    set_parameters(network_topo)
-    swap_controller = DQNSwapController(
-    model_path="simulator/first_RL/RL/dqn_wait_swap",
-    target_fidelity=0.75
-)
+    swap_controller = DQNSwapController(target_fidelity=0.75)
 
     for node in network_topo.get_nodes_by_type(RouterNetTopo.QUANTUM_ROUTER):
         node.rl_swap_controller = swap_controller
@@ -40,7 +36,7 @@ def main():
             node=routers[node_name],
             traffic_demands=TRAFFIC_MATRIX[node_name],
             start_offset_s=0.5 * i,
-            parallel_sessions_per_flow=2,
+            parallel_sessions_per_flow=1,
             parallel_stagger_s=0.2,
             reservation_duration_s=5.0,
             reservation_setup_margin_s=1.0,

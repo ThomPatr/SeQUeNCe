@@ -95,6 +95,15 @@ class BBPSSW_BDS(BBPSSWProtocol):
         # Also determine BDS density matrix elements of kept entangled pair conditioned on successful purification,
         # immediately after start of purification
         p_success, new_bds = self.purification_res()
+        print(
+            f"[BBPSSW-START][{self.owner.name}] "
+            f"kept={self.kept_memo.name}, "
+            f"meas={self.meas_memo.name}, "
+            f"remote={self.remote_node_name}, "
+            f"F_before={self.kept_memo.fidelity:.6f}, "
+            f"predicted_F_after={new_bds[0]:.6f}, "
+            f"p_success={p_success:.6f}"
+        )
         assert 1. >= p_success >= 0.5, 'Entanglement purification success probability should be higher than 1/2.'
         p_1 = (1 + np.sqrt(2 * p_success - 1)) / 2
         if self.owner.get_generator().random() <= p_1:
@@ -138,9 +147,18 @@ class BBPSSW_BDS(BBPSSWProtocol):
                 remote_kept_memory.bds_decohere()
                 self.kept_memo.bds_decohere()
                 self.kept_memo.fidelity = self.kept_memo.get_bds_fidelity()
+                print(
+                        f"[BBPSSW-SUCCESS][{self.owner.name}] "
+                        f"memory={self.kept_memo.name}, "
+                        f"new_fidelity={self.kept_memo.fidelity:.6f}"
+                    )
                 self.update_resource_manager(self.kept_memo, state="PURIFIED")
             else:
                 log.logger.info(f'Purification failed because measure results: {self.meas_res}, {msg.meas_res}')
+                print(
+                        f"[BBPSSW-FAIL][{self.owner.name}] "
+                        f"kept={self.kept_memo.name}"
+                    )
                 self.update_resource_manager(self.kept_memo, state="RAW")
 
         else:

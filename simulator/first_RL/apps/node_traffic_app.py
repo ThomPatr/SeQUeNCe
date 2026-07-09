@@ -30,7 +30,7 @@ class NodeTrafficApp:
         node,
         traffic_demands: dict,
         start_offset_s: float = 0.0,
-        parallel_sessions_per_flow: int = 2,
+        parallel_sessions_per_flow: int = 1,
         parallel_stagger_s: float = 0.2,
         reservation_duration_s: float = 5.0,
         reservation_setup_margin_s: float = 1.0,
@@ -184,7 +184,8 @@ class NodeTrafficApp:
             start_time=start_time,
             end_time=end_time,
             memory_size=requested_pairs,
-            target_fidelity=target_fidelity
+            target_fidelity=target_fidelity,
+            identity=session_id
         )
 
         process = Process(self, "check_session_progress", [session_id])
@@ -362,7 +363,12 @@ class NodeTrafficApp:
                 reason="memory_update_to_RAW"
             )
             return
-
+        if info.state == "PURIFIED":
+            print(
+                f"[PURIFICATION-DETECTED][{self.node.name}] "
+                f"memory={info.index}, remote={info.remote_node}, "
+                f"fidelity={info.fidelity:.6f}, time={now_s:.6f}s"
+            )
         if info.fidelity <= 0 or info.remote_node is None:
             return
 

@@ -21,8 +21,15 @@ class CustomMemoryArray(BaseMemoryArray):
 
         self.memories = []
         self.memory_name_to_index = {}
-        node_name= name.split(".")[0]
+        node_name = name.split(".")[0]
         hw = NODE_HW[node_name]
+
+        memo_fidelity = hw["base_fidelity"]
+        memo_frequency = hw["memo_freq"]
+        memo_efficiency = hw["memo_eff"]
+        memo_coherence_time = hw["memo_expire"]
+        memo_stdev = hw["memo_stdev"]
+
         for i in range(num_memories):
             memory_name = self.name + f"[{i}]"
             self.memory_name_to_index[memory_name] = i
@@ -31,21 +38,21 @@ class CustomMemoryArray(BaseMemoryArray):
                 memory = MemoryWithRandomCoherenceTime(
                     memory_name,
                     timeline,
-                    fidelity,
-                    frequency,
-                    efficiency,
-                    coherence_time,
-                    hw["memo_stdev"],
+                    memo_fidelity,
+                    memo_frequency,
+                    memo_efficiency,
+                    memo_coherence_time,
+                    memo_stdev,
                     wavelength,
                 )
             else:
                 memory = Memory(
                     memory_name,
                     timeline,
-                    fidelity,
-                    frequency,
-                    efficiency,
-                    coherence_time,
+                    memo_fidelity,
+                    memo_frequency,
+                    memo_efficiency,
+                    memo_coherence_time,
                     wavelength,
                     decoherence_errors,
                     cutoff_ratio,

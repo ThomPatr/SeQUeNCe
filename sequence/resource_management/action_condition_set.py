@@ -369,9 +369,117 @@ def es_rule_action_B(memories_info: list[MemoryInfo], _args: Arguments) -> Actio
     protocol = EntanglementSwappingB(TempNode, "ESB." + memory.name, memory)
     return protocol, [None], [None], [None]
 
+def _get_node_from_memory(memory: Memory) -> Node | None:
+    """
+    Recover the QuantumRouter node from a memory object.
+
+    Memory names are usually like:
+        sophia.MemoryArray[0]
+    so the node name is before ".MemoryArray".
+    """
+    try:
+        node_name = memory.name.split(".MemoryArray")[0]
+        return memory.timeline.get_entity_by_name(node_name)
+    except Exception:
+        return None
+
+
+def _rl_allows_swapping(
+    memory_manager: MemoryManager,
+    memory_info_1: MemoryInfo,
+    memory_info_2: MemoryInfo
+) -> bool:
+    """
+    Optional RL gate for entanglement swapping.
+    """
+
+    node = _get_node_from_memory(memory_info_1.memory)
+
+    if node is None:
+        return True
+
+    controller = getattr(node, "rl_swap_controller", None)
+
+    if controller is None:
+        return True
+
+    return controller.decide(
+        node=node,
+        left_memory=memory_info_1.memory,
+        right_memory=memory_info_2.memory
+    )
+"""
+def _rl_allows_swapping(memory_manager: MemoryManager,
+                        memory_info_1: MemoryInfo,
+                        memory_info_2: MemoryInfo) -> bool:
+    
+    Optional RL gate for entanglement swapping.
+
+    If the node has an rl_swap_controller, the controller decides whether
+    swapping should be performed now or delayed.
+    If no controller is attached, the default SeQUeNCe behavior is preserved.
+    
+    owner = memory_manager.owner
+
+    controller = getattr(owner, "rl_swap_controller", None)
+
+    if controller is None:
+        return True
+
+    return controller.decide(
+        node=owner,
+        left_memory=memory_info_1.memory,
+        right_memory=memory_info_2.memory
+    )
+"""
 
 def es_rule_condition_A(memory_info: MemoryInfo, memory_manager: MemoryManager, args: Arguments) -> list[MemoryInfo]:
-    """Condition function used for the EntanglementSwappingA protocol on all interior nodes (see `es_rule_action_A`).
+    """Condition function used for the EntanglementSwappingA protocol on all interior nodes."""
+    memory_indices = args["memory_indices"]
+    remote_left_node = args["left"]
+    remote_right_node = args["right"]
+    fidelity = args["fidelity"]
+
+    # case 1: memory_info is the left-hand-side memory
+    if (memory_info.state in ["ENTANGLED", "PURIFIED"]
+            and memory_info.index in memory_indices
+            and memory_info.remote_node == remote_left_node
+            and memory_info.fidelity >= fidelity):
+
+        for memory_info_2 in memory_manager:
+            if (memory_info_2 != memory_info
+                    and memory_info_2.state in ["ENTANGLED", "PURIFIED"]
+                    and memory_info_2.index in memory_indices
+                    and memory_info_2.remote_node == remote_right_node
+                    and memory_info_2.fidelity >= fidelity):
+
+                if not _rl_allows_swapping(memory_manager, memory_info, memory_info_2):
+                    return []
+
+                return [memory_info, memory_info_2]
+
+    # case 2: memory_info is the right-hand-side memory
+    if (memory_info.state in ["ENTANGLED", "PURIFIED"]
+            and memory_info.index in memory_indices
+            and memory_info.remote_node == remote_right_node
+            and memory_info.fidelity >= fidelity):
+
+        for memory_info_2 in memory_manager:
+            if (memory_info_2 != memory_info
+                    and memory_info_2.state in ["ENTANGLED", "PURIFIED"]
+                    and memory_info_2.index in memory_indices
+                    and memory_info_2.remote_node == remote_left_node
+                    and memory_info_2.fidelity >= fidelity):
+
+                if not _rl_allows_swapping(memory_manager, memory_info, memory_info_2):
+                    return []
+
+                return [memory_info, memory_info_2]
+
+    return []
+"""
+def es_rule_condition_A(memory_info: MemoryInfo, memory_manager: MemoryManager, args: Arguments) -> list[MemoryInfo]:
+    Condition function used for the EntanglementSwappingA protocol on all interior nodes (see `es_rule_action_A`).
     
     Args:
         memory_info: the memory info to be checked
@@ -381,7 +489,7 @@ def es_rule_condition_A(memory_info: MemoryInfo, memory_manager: MemoryManager, 
     
     Returns:
         list[MemoryInfo]: a list of two memory info (memory_info, memory_info_2) that satisfy the condition
-    """
+    
     memory_indices = args["memory_indices"]
     remote_left_node = args["left"]
     remote_right_node = args["right"]
@@ -417,7 +525,7 @@ def es_rule_condition_A(memory_info: MemoryInfo, memory_manager: MemoryManager, 
     
     return []
 
-
+"""
 def es_rule_condition_B_end(memory_info: MemoryInfo, _manager: MemoryManager, args: Arguments) -> list[MemoryInfo]:
     """Condition function used by the EntanglementSwappingB protocol on either the responder or initiator nodes.
     

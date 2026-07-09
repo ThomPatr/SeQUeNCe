@@ -670,16 +670,16 @@ if __name__ == "__main__":
             bsm_success_indices_2 = [i for i, res in enumerate(bsm_res) if res == 2]
             meas_res = erc_2.get_detector_entries(erc_2.bs_detector_name, start_time_meas, MODE_NUM, SPDC_FREQUENCY)
             res_interference = {}
-
-            # detector 1
-            num_bsm_res = len(bsm_success_indices_1)
-            meas_res_valid = [meas_res[i] for i in bsm_success_indices_1]
-            num_detector_0 = meas_res_valid.count(1) + meas_res_valid.count(3)
-            num_detector_1 = meas_res_valid.count(2) + meas_res_valid.count(3)
-            counts_interfere = [num_detector_0, num_detector_1]
-            res_interference["counts1"] = counts_interfere
-            res_interference["total_count1"] = num_bsm_res
-
+ 
+            # detector 1 
+            num_bsm_res = len(bsm_success_indices_1) 
+            meas_res_valid = [meas_res[i] for i in bsm_success_indices_1] 
+            num_detector_0 = meas_res_valid.count(1) + meas_res_valid.count(3) 
+            num_detector_1 = meas_res_valid.count(2) + meas_res_valid.count(3) 
+            counts_interfere = [num_detector_0, num_detector_1] 
+            res_interference["counts1"] = counts_interfere 
+            res_interference["total_count1"] = num_bsm_res 
+ 
             # detector 2
             num_bsm_res = len(bsm_success_indices_2)
             meas_res_valid = [meas_res[i] for i in bsm_success_indices_2]

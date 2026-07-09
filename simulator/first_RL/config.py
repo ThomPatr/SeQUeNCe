@@ -21,50 +21,50 @@ TRAFFIC_MATRIX = {
     "valrose": {
         "menton": {
             "interval_s": 2.0,
-            "memory_size": 1,
-            "target_fidelity": 0.75
+            "memory_size": 2,
+            "target_fidelity": 0.85
         },
         "monaco": {
             "interval_s": 3.0,
-            "memory_size": 1,
-            "target_fidelity": 0.75
+            "memory_size": 2,
+            "target_fidelity": 0.85
         }
     },
 
     "cannes": {
         "menton": {
             "interval_s": 2.5,
-            "memory_size": 1,
-            "target_fidelity": 0.75
+            "memory_size": 2,
+            "target_fidelity": 0.85
         }
     },
 
     "grasse": {
         "nice": {
             "interval_s": 1.8,
-            "memory_size": 1,
-            "target_fidelity": 0.75
+            "memory_size": 2,
+            "target_fidelity": 0.85
         }
     },
 
     "ecov": {
     "valrose": {
         "interval_s": 2.4,
-        "memory_size": 1,
-        "target_fidelity": 0.75
+        "memory_size": 2,
+        "target_fidelity": 0.85
     },
     "menton": {
         "interval_s": 2.8,
-        "memory_size": 1,
-        "target_fidelity": 0.75
+        "memory_size": 2,
+        "target_fidelity": 0.85
     }
     },
 
     "antibes": {
         "monaco": {
             "interval_s": 2.2,
-            "memory_size": 1,
-            "target_fidelity": 0.75
+            "memory_size": 2,
+            "target_fidelity": 0.85
         }
     }
 }
@@ -81,20 +81,20 @@ NODE_HW = {
     "menton":  {"memo_freq": 8e3, "memo_expire": 0.038, "memo_eff": 0.41, "base_fidelity": 0.87, "memo_stdev": 0.008},
     "ecov":     {"memo_freq": 8e3,"memo_expire": 0.060,"memo_eff": 0.47,"base_fidelity": 0.91,"memo_stdev": 0.012},
 }
-
-BSM_HW = {
-    "detector_efficiency": 0.55,
-    "detector_count_rate": 2e7,
-    "detector_resolution": 50,  # ps
-}
-
-LINK_PHYSICS = {
-    tuple(sorted(("valrose", "nice"))): {
-        "base_alpha_db_per_km": 0.18,
-        "extra_loss_db": 0.04,
-    },
-    tuple(sorted(("nice", "cagnes"))): {
-        "base_alpha_db_per_km": 0.20,
+ 
+BSM_HW = { 
+    "detector_efficiency": 0.55, 
+    "detector_count_rate": 2e7, 
+    "detector_resolution": 50,  # ps 
+} 
+ 
+LINK_PHYSICS = { 
+    tuple(sorted(("valrose", "nice"))): { 
+        "base_alpha_db_per_km": 0.18, 
+        "extra_loss_db": 0.04, 
+    }, 
+    tuple(sorted(("nice", "cagnes"))): { 
+        "base_alpha_db_per_km": 0.20, 
         "extra_loss_db": 0.05,
     },
     tuple(sorted(("cagnes", "antibes"))): {
