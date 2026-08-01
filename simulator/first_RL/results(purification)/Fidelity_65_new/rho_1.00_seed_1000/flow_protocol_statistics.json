@@ -1,0 +1,434 @@
+[
+    {
+        "source": "antibes",
+        "destination": "monaco",
+        "swapping": {
+            "attempts": 2920,
+            "successes": 1845,
+            "failures": 1075,
+            "success_probability": 0.6318493150684932,
+            "nodes": {
+                "cagnes": {
+                    "attempts": 2068,
+                    "successes": 1287,
+                    "failures": 781,
+                    "candidates": 0
+                },
+                "nice": {
+                    "attempts": 852,
+                    "successes": 558,
+                    "failures": 294,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 78,
+            "attempts": 78,
+            "successes": 52,
+            "failures": 26,
+            "success_probability": 0.6666666666666666,
+            "input_fidelities": [
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225,
+                0.643383225
+            ],
+            "output_fidelities": [
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638,
+                0.6714275617305638
+            ],
+            "average_input_fidelity": 0.6433832250000007,
+            "average_output_fidelity": 0.6714275617305641,
+            "average_fidelity_gain": 0.02804433673056339,
+            "nodes": {
+                "monaco": {
+                    "attempts": 0,
+                    "successes": 0,
+                    "failures": 0,
+                    "candidates": 78
+                },
+                "antibes": {
+                    "attempts": 78,
+                    "successes": 52,
+                    "failures": 26,
+                    "candidates": 0
+                }
+            }
+        }
+    },
+    {
+        "source": "cannes",
+        "destination": "menton",
+        "swapping": {
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "nodes": {}
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    },
+    {
+        "source": "ecov",
+        "destination": "menton",
+        "swapping": {
+            "attempts": 120,
+            "successes": 71,
+            "failures": 49,
+            "success_probability": 0.5916666666666667,
+            "nodes": {
+                "sophia": {
+                    "attempts": 120,
+                    "successes": 71,
+                    "failures": 49,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    },
+    {
+        "source": "ecov",
+        "destination": "valrose",
+        "swapping": {
+            "attempts": 2884,
+            "successes": 1830,
+            "failures": 1054,
+            "success_probability": 0.6345353675450763,
+            "nodes": {
+                "nice": {
+                    "attempts": 1553,
+                    "successes": 980,
+                    "failures": 573,
+                    "candidates": 0
+                },
+                "cannes": {
+                    "attempts": 835,
+                    "successes": 530,
+                    "failures": 305,
+                    "candidates": 0
+                },
+                "cagnes": {
+                    "attempts": 496,
+                    "successes": 320,
+                    "failures": 176,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 25,
+            "attempts": 25,
+            "successes": 13,
+            "failures": 12,
+            "success_probability": 0.52,
+            "input_fidelities": [
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999,
+                0.5378004719999999
+            ],
+            "output_fidelities": [
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063,
+                0.5455922570823063
+            ],
+            "average_input_fidelity": 0.5378004720000003,
+            "average_output_fidelity": 0.5455922570823064,
+            "average_fidelity_gain": 0.007791785082306157,
+            "nodes": {
+                "valrose": {
+                    "attempts": 0,
+                    "successes": 0,
+                    "failures": 0,
+                    "candidates": 25
+                },
+                "ecov": {
+                    "attempts": 25,
+                    "successes": 13,
+                    "failures": 12,
+                    "candidates": 0
+                }
+            }
+        }
+    },
+    {
+        "source": "grasse",
+        "destination": "nice",
+        "swapping": {
+            "attempts": 835,
+            "successes": 537,
+            "failures": 298,
+            "success_probability": 0.6431137724550898,
+            "nodes": {
+                "sophia": {
+                    "attempts": 835,
+                    "successes": 537,
+                    "failures": 298,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    },
+    {
+        "source": "valrose",
+        "destination": "menton",
+        "swapping": {
+            "attempts": 1062,
+            "successes": 698,
+            "failures": 364,
+            "success_probability": 0.6572504708097928,
+            "nodes": {
+                "nice": {
+                    "attempts": 676,
+                    "successes": 442,
+                    "failures": 234,
+                    "candidates": 0
+                },
+                "monaco": {
+                    "attempts": 386,
+                    "successes": 256,
+                    "failures": 130,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    },
+    {
+        "source": "valrose",
+        "destination": "monaco",
+        "swapping": {
+            "attempts": 937,
+            "successes": 583,
+            "failures": 354,
+            "success_probability": 0.6221985058697972,
+            "nodes": {
+                "nice": {
+                    "attempts": 937,
+                    "successes": 583,
+                    "failures": 354,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    }
+]

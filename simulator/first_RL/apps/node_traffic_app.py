@@ -1,13 +1,12 @@
-from typing import TYPE_CHECKING
+from __future__ import annotations
+
 from collections import defaultdict, deque
+from typing import TYPE_CHECKING
 
-from sequence.kernel.process import Process
+import numpy as np
+
 from sequence.kernel.event import Event
-
-from simulator.first_RL.metrics.link_metrics import (
-    register_pair_creation,
-    register_pair_discard
-)
+from sequence.kernel.process import Process
 
 if TYPE_CHECKING:
     from sequence.resource_management.memory_manager import MemoryInfo
@@ -15,190 +14,313 @@ if TYPE_CHECKING:
 
 class NodeTrafficApp:
     """
-    Persistent end-to-end traffic generator with controlled parallelism.
+    End-to-end Poisson traffic generator.
 
-    Main ideas:
-    - each src->dst flow remains active over time;
-    - multiple sessions per flow can overlap in time;
-    - parallel sessions are staggered to avoid same-timestep protocol collisions;
-    - completed, failed, or timed-out sessions are replaced automatically;
-    - EPR pairs delivered to the application are consumed immediately.
+    Each source-destination flow generates reservation requests according
+    to an independent Poisson process:
+
+        Delta T_d ~ Exp(lambda_d)
+
+    where lambda_d is the request arrival rate in requests per second.
+
+    Each request asks for m_d end-to-end entangled pairs. Therefore, the
+    average traffic demand associated with flow d is:
+
+        h_d = lambda_d * m_d
+
+    expressed in requested entangled pairs per second.
+
+    Arrivals are independent of session completion. When an arrival occurs:
+
+    - the request is admitted if the maximum number of active sessions for
+      the flow has not been reached;
+    - otherwise, the request is blocked;
+    - the next arrival is always scheduled independently.
     """
 
-    def __init__(
-        self,
-        node,
-        traffic_demands: dict,
-        start_offset_s: float = 0.0,
-        parallel_sessions_per_flow: int = 1,
-        parallel_stagger_s: float = 0.2,
-        reservation_duration_s: float = 5.0,
-        reservation_setup_margin_s: float = 1.0,
-        retry_delay_s: float = 1.0,
-        monitor_period_s: float = 0.5,
-    ):
+    def __init__( self, node, traffic_demands: dict, start_offset_s: float = 0.0, enable_purification=True ,max_parallel_sessions_per_flow: int = 1, reservation_duration_s: float = 5.0, reservation_setup_margin_s: float = 1.0, random_seed: int | None = None,verbose: bool = False,):
         self.node = node
         self.node.set_app(self)
-
         self.traffic_demands = traffic_demands
         self.start_offset_ps = int(start_offset_s * 1e12)
+        self.max_parallel_sessions_per_flow = int( max_parallel_sessions_per_flow )
 
-        self.parallel_sessions_per_flow = parallel_sessions_per_flow
-        self.parallel_stagger_ps = int(parallel_stagger_s * 1e12)
-        self.reservation_duration_ps = int(reservation_duration_s * 1e12)
-        self.reservation_setup_margin_ps = int(reservation_setup_margin_s * 1e12)
-        self.retry_delay_ps = int(retry_delay_s * 1e12)
-        self.monitor_period_ps = int(monitor_period_s * 1e12)
+        if self.max_parallel_sessions_per_flow <= 0:
+            raise ValueError( "max_parallel_sessions_per_flow must be positive." )
+        self.reservation_duration_ps = int( reservation_duration_s * 1e12)
+        self.reservation_setup_margin_ps = int(  reservation_setup_margin_s * 1e12)
+        if self.reservation_duration_ps <= 0:
+            raise ValueError("reservation_duration_s must be positive." )
 
+        if self.reservation_setup_margin_ps < 0:
+            raise ValueError( "reservation_setup_margin_s cannot be negative." )
+        self.verbose = verbose
+        self.rng = np.random.default_rng(random_seed)
+        self.enable_purification = bool(
+        enable_purification
+    )
         self.global_session_id = 0
-
-        self.flow_active_sessions = {
-            dst: set() for dst in traffic_demands.keys()
-        }
-
-        self.active_sessions = {}
-        self.history = []
-
+        self.flow_active_sessions = { destination: set() for destination in traffic_demands}
+        self.active_sessions: dict[int, dict] = {}
+        self.history: list[dict] = []
+        # Used only if SeQUeNCe does not preserve the reservation identity.
         self.pending_reservation_ids_by_dst = defaultdict(deque)
+        self.flow_statistics = {destination: { "arrival_events": 0, "admitted_requests": 0, "blocked_requests": 0,  "requested_pairs": 0,  "admitted_pairs": 0, } for destination in traffic_demands}
+        self._validate_traffic_demands()
 
-    def schedule_initial_events(self):
-        """
-        Bootstrap all flows.
+    # ============================================================
+    # CONFIGURATION
+    # ============================================================
 
-        Parallel sessions are not created at the exact same timestamp.
-        They are staggered by parallel_stagger_s but remain overlapping
-        because reservation windows are much longer.
-        """
-        for flow_idx, dst in enumerate(self.traffic_demands.keys()):
-            for slot_idx in range(self.parallel_sessions_per_flow):
-                event_time = (
-                    self.start_offset_ps
-                    + int(flow_idx * 5e11)
-                    + slot_idx * self.parallel_stagger_ps
+    def _validate_traffic_demands(self) -> None:
+        for destination, demand in self.traffic_demands.items():
+            arrival_rate = self._get_arrival_rate(destination)
+
+            if arrival_rate <= 0:
+                raise ValueError(
+                    f"Arrival rate must be positive for "
+                    f"{self.node.name}->{destination}."
                 )
 
-                process = Process(self, "_start_new_session", [dst])
-                event = Event(event_time, process)
-                self.node.timeline.schedule(event)
+            memory_size = int(demand["memory_size"])
 
-            monitor_time = (
-                self.start_offset_ps
-                + int(flow_idx * 5e11)
-                + self.monitor_period_ps
+            if memory_size <= 0:
+                raise ValueError(
+                    f"memory_size must be positive for "
+                    f"{self.node.name}->{destination}."
+                )
+
+            target_fidelity = float(demand["target_fidelity"])
+
+            if not 0.0 <= target_fidelity <= 1.0:
+                raise ValueError(
+                    f"target_fidelity must belong to [0, 1] for "
+                    f"{self.node.name}->{destination}."
+                )
+
+    def _get_arrival_rate(self, destination: str) -> float:
+        """
+        Return the request arrival rate lambda in requests per second.
+
+        Preferred configuration:
+            arrival_rate_requests_per_s
+
+        Supported compatibility configuration:
+            mean_interarrival_s
+
+        The old interval_s field is interpreted as a mean inter-arrival
+        time only for backward compatibility.
+        """
+        demand = self.traffic_demands[destination]
+
+        if "arrival_rate_requests_per_s" in demand:
+            arrival_rate = float( demand["arrival_rate_requests_per_s"]  )
+
+        elif "mean_interarrival_s" in demand:
+            mean_interarrival_s = float(demand["mean_interarrival_s"])
+
+            if mean_interarrival_s <= 0:
+                raise ValueError(
+                    f"mean_interarrival_s must be positive for "
+                    f"{self.node.name}->{destination}."
+                )
+
+            arrival_rate = 1.0 / mean_interarrival_s
+
+        elif "interval_s" in demand:
+            mean_interarrival_s = float(demand["interval_s"] )
+
+            if mean_interarrival_s <= 0:
+                raise ValueError(
+                    f"interval_s must be positive for "
+                    f"{self.node.name}->{destination}."
+                )
+
+            arrival_rate = 1.0 / mean_interarrival_s
+
+        else:
+            raise KeyError(
+                f"Missing arrival configuration for "
+                f"{self.node.name}->{destination}. "
+                f"Use arrival_rate_requests_per_s."
             )
 
-            monitor_process = Process(self, "monitor_flow", [dst])
-            monitor_event = Event(monitor_time, monitor_process)
-            self.node.timeline.schedule(monitor_event)
+        if arrival_rate <= 0:
+            raise ValueError(
+                f"Arrival rate must be positive for "
+                f"{self.node.name}->{destination}."
+            )
 
-    def monitor_flow(self, dst: str):
+        return arrival_rate
+
+    # ============================================================
+    # POISSON ARRIVAL PROCESS
+    # ============================================================
+
+    def schedule_initial_events(self) -> None:
         """
-        Periodically checks whether the flow still has the desired number
-        of active sessions. If some sessions completed or failed, it refills
-        the available slots.
+        Schedule the first stochastic arrival for every flow.
+
+        The first inter-arrival time is sampled from the same exponential
+        distribution used for all subsequent arrivals.
         """
-        self._fill_parallel_slots(dst)
+        for flow_index, destination in enumerate(self.traffic_demands):
+            
+            flow_offset_ps = int( flow_index * 0.5 * 1e12 )
 
-        process = Process(self, "monitor_flow", [dst])
-        event = Event(self.node.timeline.now() + self.monitor_period_ps, process)
-        self.node.timeline.schedule(event)
+            first_arrival_ps = ( self.start_offset_ps + flow_offset_ps + self._sample_interarrival_ps(destination) )
 
-    def _count_active_sessions_for_flow(self, dst: str) -> int:
-        return sum(
-            1 for sid in self.flow_active_sessions[dst]
-            if sid in self.active_sessions
-        )
+            process = Process( self, "_handle_arrival", [destination],)
 
-    def _fill_parallel_slots(self, dst: str):
+            self.node.timeline.schedule( Event(first_arrival_ps, process) )
+
+    def _sample_interarrival_ps( self, destination: str,) -> int:
         """
-        Creates new sessions until the number of active sessions for this flow
-        reaches parallel_sessions_per_flow.
-        """
-        missing = (
-            self.parallel_sessions_per_flow
-            - self._count_active_sessions_for_flow(dst)
-        )
+        Sample an exponentially distributed inter-arrival time.
 
-        if missing <= 0:
+        If lambda is expressed in requests/s:
+
+            Delta T ~ Exp(lambda)
+            E[Delta T] = 1 / lambda
+        """
+        arrival_rate = self._get_arrival_rate(  destination)
+
+        interarrival_s = self.rng.exponential(  scale=1.0 / arrival_rate )
+
+        return max( 1, int(interarrival_s * 1e12), )
+
+    def _schedule_next_arrival( self, destination: str,) -> None:
+        next_arrival_ps = ( self.node.timeline.now()  + self._sample_interarrival_ps(destination) )
+
+        process = Process( self, "_handle_arrival", [destination], )
+
+        self.node.timeline.schedule( Event(next_arrival_ps, process) )
+
+    def _handle_arrival( self, destination: str,) -> None:
+        """
+        Process one external Poisson arrival.
+
+        The next arrival is scheduled independently of admission,
+        completion, rejection, or timeout of the current request.
+        """
+        now_ps = self.node.timeline.now()
+        demand = self.traffic_demands[destination]
+        requested_pairs = int(demand["memory_size"])
+        statistics = self.flow_statistics[ destination]
+        statistics["arrival_events"] += 1
+        statistics["requested_pairs"] += requested_pairs
+
+        # Schedule the next external arrival independently.
+        self._schedule_next_arrival(destination)
+
+        active_count = (self._count_active_sessions_for_flow(  destination ) )
+
+        if ( active_count >= self.max_parallel_sessions_per_flow):
+            statistics["blocked_requests"] += 1
+            blocked_summary = {
+                "session_id": None,
+                "approved": False,
+                "delivered_pairs": 0,
+                "requested_pairs": requested_pairs,
+                "delivery_ratio": 0.0,
+                "completed": False,
+                "avg_fidelity": 0.0,
+                "avg_latency_s": None,
+                "src": self.node.name,
+                "dst": destination,
+                "close_reason": "arrival_blocked",
+                "arrival_time_s": now_ps * 1e-12,
+            }
+
+            self.history.append(blocked_summary)
+
+            if self.verbose:
+                print(
+                    f"[{self.node.name}] ARRIVAL BLOCKED "
+                    f"for {destination} at "
+                    f"{now_ps * 1e-12:.6f}s "
+                    f"(active={active_count}, "
+                    f"limit="
+                    f"{self.max_parallel_sessions_per_flow})"
+                )
+
             return
 
-        now = self.node.timeline.now()
+        statistics["admitted_requests"] += 1
+        statistics["admitted_pairs"] += requested_pairs
 
-        for slot_idx in range(missing):
-            process = Process(self, "_start_new_session", [dst])
-            event_time = now + slot_idx * self.parallel_stagger_ps
-            event = Event(event_time, process)
-            self.node.timeline.schedule(event)
+        self._start_new_session(destination)
 
-    def _start_new_session(self, dst: str):
-        """
-        Starts a new end-to-end entanglement session for a given destination.
-        """
-        if self._count_active_sessions_for_flow(dst) >= self.parallel_sessions_per_flow:
-            return
+    # ============================================================
+    # SESSION MANAGEMENT
+    # ============================================================
 
-        now = self.node.timeline.now()
-        demand = self.traffic_demands[dst]
+    def _count_active_sessions_for_flow( self, destination: str, ) -> int:
+        return sum( 1 for session_id in self.flow_active_sessions[destination] if session_id in self.active_sessions )
 
+    def _start_new_session( self, destination: str,) -> None:
+
+        now_ps = self.node.timeline.now()
+
+        demand = self.traffic_demands[destination]
+
+        
         self.global_session_id += 1
+        
         session_id = self.global_session_id
-
-        requested_pairs = demand["memory_size"]
-        target_fidelity = demand["target_fidelity"]
-
-        start_time = now + self.reservation_setup_margin_ps
-        end_time = start_time + self.reservation_duration_ps
+        
+        requested_pairs = int(  demand["memory_size"] )
+        
+        target_fidelity = float(   demand["target_fidelity"] )
+        
+        reservation_start_ps = (    now_ps   + self.reservation_setup_margin_ps )
+        
+        reservation_end_ps = (  reservation_start_ps  + self.reservation_duration_ps )
 
         self.active_sessions[session_id] = {
             "session_id": session_id,
             "src": self.node.name,
-            "dst": dst,
-            "created_at_ps": now,
-            "reservation_start_ps": start_time,
-            "reservation_end_ps": end_time,
+            "dst": destination,
+            "created_at_ps": now_ps,
+            "reservation_start_ps":
+                reservation_start_ps,
+            "reservation_end_ps":
+                reservation_end_ps,
             "approved": None,
             "requested_pairs": requested_pairs,
             "delivered_pairs": 0,
             "fidelities": [],
             "delivery_times_ps": [],
-            "counted_memories": set(),
+            "counted_pair_states": set(),
             "first_delivery_ps": None,
             "last_delivery_ps": None,
             "closed": False,
             "close_reason": None,
         }
 
-        self.flow_active_sessions[dst].add(session_id)
-        self.pending_reservation_ids_by_dst[dst].append(session_id)
+        self.flow_active_sessions[ destination ].add(session_id)
 
-        print(
-            f"\n[{self.node.name}] SESSION {session_id} to {dst} CREATED "
-            f"at {now * 1e-12:.6f}s "
-            f"(requested_pairs={requested_pairs}, "
-            f"target_fidelity={target_fidelity:.4f}, "
-            f"reservation={start_time * 1e-12:.6f}s->{end_time * 1e-12:.6f}s)"
-        )
+        self.pending_reservation_ids_by_dst[  destination ].append(session_id)
 
-        self.node.network_manager.request(
-            dst,
-            start_time=start_time,
-            end_time=end_time,
-            memory_size=requested_pairs,
-            target_fidelity=target_fidelity,
-            identity=session_id
-        )
+        if self.verbose:
+            print(
+                f"\n[{self.node.name}] SESSION "
+                f"{session_id} to {destination} CREATED "
+                f"at {now_ps * 1e-12:.6f}s "
+                f"(requested_pairs={requested_pairs}, "
+                f"target_fidelity={target_fidelity:.4f}, "
+                f"reservation="
+                f"{reservation_start_ps * 1e-12:.6f}s -> "
+                f"{reservation_end_ps * 1e-12:.6f}s)"
+            )
 
-        process = Process(self, "check_session_progress", [session_id])
-        event = Event(end_time, process)
-        self.node.timeline.schedule(event)
+        self.node.network_manager.request( destination, start_time=reservation_start_ps, end_time=reservation_end_ps, memory_size=requested_pairs, target_fidelity=target_fidelity, identity=session_id,)
 
-    def check_session_progress(self, session_id: int):
-        """
-        Called at the end of the technical reservation interval.
+        timeout_process = Process( self, "check_session_progress", [session_id],)
 
-        If the session has completed, it is closed as completed.
-        If it is incomplete or rejected, it is closed and the flow is refilled.
-        """
+        self.node.timeline.schedule( Event( reservation_end_ps, timeout_process,  ) )
+
+    def check_session_progress( self, session_id: int, ) -> None:
         if session_id not in self.active_sessions:
             return
 
@@ -207,35 +329,19 @@ class NodeTrafficApp:
         if session["closed"]:
             return
 
-        requested = session["requested_pairs"]
-        delivered = session["delivered_pairs"]
-        dst = session["dst"]
-
         if session["approved"] is False:
-            self._close_session(session_id, close_reason="reservation_rejected")
-            self._schedule_retry(dst)
+            self._close_session( session_id, close_reason="reservation_rejected", )
             return
 
-        if delivered >= requested:
-            self._close_session(session_id, close_reason="completed")
-            self._schedule_retry(dst, delay_ps=self.parallel_stagger_ps)
+        if ( session["delivered_pairs"] >= session["requested_pairs"]):
+            self._close_session(  session_id, close_reason="completed", )
             return
 
-        self._close_session(session_id, close_reason="partial_or_timeout")
-        self._schedule_retry(dst)
+        self._close_session( session_id, close_reason="partial_or_timeout",)
 
-    def _schedule_retry(self, dst: str, delay_ps: int | None = None):
-        if delay_ps is None:
-            delay_ps = self.retry_delay_ps
-
-        process = Process(self, "_fill_parallel_slots", [dst])
-        event = Event(self.node.timeline.now() + delay_ps, process)
-        self.node.timeline.schedule(event)
-
-    def _close_session(self, session_id: int, close_reason: str):
+    def _close_session(  self,  session_id: int,  close_reason: str, ) -> None:
         if session_id not in self.active_sessions:
             return
-
         data = self.active_sessions[session_id]
 
         if data["closed"]:
@@ -244,177 +350,219 @@ class NodeTrafficApp:
         data["closed"] = True
         data["close_reason"] = close_reason
 
-        delivered = data["delivered_pairs"]
-        requested = data["requested_pairs"]
+        delivered_pairs = int(data["delivered_pairs"])
 
-        avg_fidelity = (
-            sum(data["fidelities"]) / len(data["fidelities"])
-            if data["fidelities"]
-            else 0.0
-        )
+        requested_pairs = int( data["requested_pairs"])
+
+        average_fidelity = ( sum(data["fidelities"]) / len(data["fidelities"]) if data["fidelities"] else 0.0 )
 
         if data["delivery_times_ps"]:
-            avg_latency_ps = sum(
-                t - data["created_at_ps"]
-                for t in data["delivery_times_ps"]
-            ) / len(data["delivery_times_ps"])
-            avg_latency_s = avg_latency_ps * 1e-12
+            average_latency_ps = ( sum(  delivery_time  - data["created_at_ps"]  for delivery_time  in data["delivery_times_ps"]  ) / len(data["delivery_times_ps"])  )
+
+            average_latency_s = ( average_latency_ps * 1e-12 )
         else:
-            avg_latency_s = None
+            average_latency_s = None
 
         summary = {
             "session_id": session_id,
             "approved": data["approved"],
-            "delivered_pairs": delivered,
-            "requested_pairs": requested,
-            "delivery_ratio": delivered / requested if requested > 0 else 0.0,
-            "completed": delivered >= requested,
-            "avg_fidelity": avg_fidelity,
-            "avg_latency_s": avg_latency_s,
+            "delivered_pairs": delivered_pairs,
+            "requested_pairs": requested_pairs,
+            "delivery_ratio": (
+                delivered_pairs / requested_pairs
+                if requested_pairs > 0
+                else 0.0
+            ),
+            "completed":
+                delivered_pairs >= requested_pairs,
+            "avg_fidelity": average_fidelity,
+            "avg_latency_s": average_latency_s,
             "src": data["src"],
             "dst": data["dst"],
             "close_reason": close_reason,
+            "arrival_time_s":
+                data["created_at_ps"] * 1e-12,
         }
 
         self.history.append(summary)
 
-        print(f"[{self.node.name}] SESSION SUMMARY {session_id} -> {data['dst']}")
-        print(f"approved     : {data['approved']}")
-        print(f"delivered    : {delivered}/{requested}")
-        print(f"avg fidelity : {avg_fidelity:.6f}")
-        print(f"avg latency  : {avg_latency_s if avg_latency_s is not None else 'None'}")
-        print(f"close reason : {close_reason}")
+        if self.verbose:
+            print(
+                f"[{self.node.name}] SESSION SUMMARY "
+                f"{session_id} -> {data['dst']}"
+            )
+            print(
+                f"approved     : {data['approved']}"
+            )
+            print(
+                f"delivered    : "
+                f"{delivered_pairs}/{requested_pairs}"
+            )
+            print(
+                f"avg fidelity : "
+                f"{average_fidelity:.6f}"
+            )
+            print(
+                f"avg latency  : "
+                f"{average_latency_s}"
+            )
+            print(
+                f"close reason : {close_reason}"
+            )
 
-        dst = data["dst"]
-        self.flow_active_sessions[dst].discard(session_id)
+        destination = data["dst"]
+
+        self.flow_active_sessions[ destination ].discard(session_id)
+
         del self.active_sessions[session_id]
 
-    def get_reservation_result(self, reservation, result: bool):
-        """
-        Called by SeQUeNCe when the RSVP reservation result is available.
+    # ============================================================
+    # RESERVATION CALLBACKS
+    # ============================================================
 
-        We try to match the result to the oldest pending session toward
-        the corresponding destination.
-        """
+    def get_reservation_result( self,  reservation,  result: bool, ) -> None:
         now_s = self.node.timeline.now() * 1e-12
+        reservation_identity = getattr( reservation, "identity", None, )
 
         matched_session_id = None
-        matched_dst = None
+        matched_destination = None
 
-        reservation_dst = None
-        for attr in ["responder", "dst", "dest", "destination"]:
-            if hasattr(reservation, attr):
-                reservation_dst = getattr(reservation, attr)
-                break
-
-        if reservation_dst in self.pending_reservation_ids_by_dst:
-            queues_to_check = [reservation_dst]
-        else:
-            queues_to_check = list(self.pending_reservation_ids_by_dst.keys())
-
-        for dst in queues_to_check:
-            queue = self.pending_reservation_ids_by_dst[dst]
-
-            while queue:
-                sid = queue.popleft()
-
-                if sid not in self.active_sessions:
-                    continue
-
-                if self.active_sessions[sid]["closed"]:
-                    continue
-
-                if self.active_sessions[sid]["approved"] is None:
-                    matched_session_id = sid
-                    matched_dst = dst
-                    break
-
-            if matched_session_id is not None:
-                break
+        if ( reservation_identity is not None and reservation_identity in self.active_sessions ):
+            matched_session_id = (  reservation_identity )
+            matched_destination = ( self.active_sessions[     matched_session_id ]["dst"])
 
         if matched_session_id is None:
-            print(
-                f"[{self.node.name}][{now_s:.6f}s] Reservation result received, "
-                f"but no pending session found."
-            )
+            reservation_destination = None
+
+            for attribute in (
+                "responder",
+                "dst",
+                "dest",
+                "destination",
+            ):
+                if hasattr(reservation, attribute):
+                    reservation_destination = getattr(  reservation,  attribute,)
+                    break
+
+            if (reservation_destination in self.pending_reservation_ids_by_dst ):
+                destinations_to_check = [ reservation_destination]
+            else:
+                destinations_to_check = list( self.pending_reservation_ids_by_dst )
+
+            for destination in destinations_to_check:
+                queue = (  self.pending_reservation_ids_by_dst[  destination]  )
+                while queue:
+                    candidate_id = queue.popleft()
+
+                    if candidate_id not in self.active_sessions:
+                        continue
+
+                    candidate_session = (self.active_sessions[  candidate_id ]  )
+
+                    if candidate_session["closed"]:
+                        continue
+
+                    if ( candidate_session["approved"] is None):
+                        matched_session_id = (  candidate_id )
+                        matched_destination = ( destination )
+                        break
+
+                if matched_session_id is not None:
+                    break
+
+        if matched_session_id is None:
+            if self.verbose:
+                print(
+                    f"[{self.node.name}]"
+                    f"[{now_s:.6f}s] "
+                    f"Reservation result received, "
+                    f"but no pending session was found."
+                )
             return
 
-        self.active_sessions[matched_session_id]["approved"] = result
-        status = "APPROVED" if result else "FAILED"
+        self.active_sessions[ matched_session_id ]["approved"] = result
 
-        print(
-            f"[{self.node.name}][{now_s:.6f}s] Reservation {status} "
-            f"for session {matched_session_id} -> {matched_dst}"
-        )
+        if self.verbose:
+            status = ("APPROVED"
+                if result
+                else "FAILED"
+            )
 
-    def get_other_reservation(self, reservation):
+            print(
+                f"[{self.node.name}]"
+                f"[{now_s:.6f}s] "
+                f"Reservation {status} for session "
+                f"{matched_session_id} -> "
+                f"{matched_destination}"
+            )
+
+    def get_other_reservation(
+        self,
+        reservation,
+    ) -> None:
         pass
 
-    def get_memory(self, info: "MemoryInfo"):
+    # ============================================================
+    # MEMORY DELIVERY CALLBACK
+    # ============================================================
+    def get_memory(self, info: "MemoryInfo") -> None:
         now_ps = self.node.timeline.now()
         now_s = now_ps * 1e-12
 
+        # The physical lifecycle of the memory is already tracked by
+        # instrument_resource_managers(). The application must not modify it.
         if info.state == "RAW":
-            register_pair_discard(
-                local_node=self.node.name,
-                memory=info.memory,
-                discard_time_ps=now_ps,
-                fidelity_before_reset=info.fidelity if info.fidelity is not None else 0.0,
-                reason="memory_update_to_RAW"
-            )
-            return
-        if info.state == "PURIFIED":
-            print(
-                f"[PURIFICATION-DETECTED][{self.node.name}] "
-                f"memory={info.index}, remote={info.remote_node}, "
-                f"fidelity={info.fidelity:.6f}, time={now_s:.6f}s"
-            )
-        if info.fidelity <= 0 or info.remote_node is None:
             return
 
-        ent_time = (
+        if info.fidelity is None or info.fidelity <= 0 or info.remote_node is None:
+            return
+
+        entanglement_time_ps = (
             info.entangle_time
             if info.entangle_time is not None and info.entangle_time >= 0
             else now_ps
         )
 
-        register_pair_creation(
-            local_node=self.node.name,
-            memory=info.memory,
-            remote_node=info.remote_node,
-            fidelity=info.fidelity,
-            entangle_time_ps=ent_time
+        candidate_session_ids = []
+
+        for session_id, session in list(self.active_sessions.items()):
+            if session["closed"]:
+                continue
+
+            if session["approved"] is not True:
+                continue
+
+            if session["dst"] != info.remote_node:
+                continue
+
+            if session["delivered_pairs"] >= session["requested_pairs"]:
+                continue
+
+            candidate_session_ids.append(session_id)
+
+        if not candidate_session_ids:
+            return
+
+        # Assign the pair to the oldest compatible admitted request.
+        session_id = min(
+            candidate_session_ids,
+            key=lambda identifier: self.active_sessions[identifier]["created_at_ps"],
         )
 
-        candidate_ids = []
-
-        for sid, data in self.active_sessions.items():
-            if data["closed"]:
-                continue
-
-            if data["approved"] is not True:
-                continue
-
-            if data["dst"] != info.remote_node:
-                continue
-
-            if data["delivered_pairs"] >= data["requested_pairs"]:
-                continue
-
-            candidate_ids.append(sid)
-
-        if not candidate_ids:
-            return
-
-        session_id = min(candidate_ids)
         session = self.active_sessions[session_id]
 
-        if info.index in session["counted_memories"]:
+        pair_state_identifier = (
+            info.memory.name,
+            entanglement_time_ps,
+            info.remote_node,
+        )
+
+        if pair_state_identifier in session["counted_pair_states"]:
             return
 
-        session["counted_memories"].add(info.index)
+        session["counted_pair_states"].add(pair_state_identifier)
         session["delivered_pairs"] += 1
-        session["fidelities"].append(info.fidelity)
+        session["fidelities"].append(float(info.fidelity))
         session["delivery_times_ps"].append(now_ps)
 
         if session["first_delivery_ps"] is None:
@@ -422,24 +570,186 @@ class NodeTrafficApp:
 
         session["last_delivery_ps"] = now_ps
 
+        if self.verbose:
+            print(
+                f"[{self.node.name}][{now_s:.6f}s] "
+                f"Session {session_id} -> {session['dst']} delivered "
+                f"{session['delivered_pairs']}/{session['requested_pairs']} "
+                f"(memory={info.index}, fidelity={info.fidelity:.6f})"
+            )
+
+        # Do not call:
+        #
+        # register_pair_creation(...)
+        # register_pair_discard(...)
+        # resource_manager.update(..., "RAW")
+        #
+        # The physical pair lifecycle is tracked by the instrumented
+        # Resource Manager, and SeQUeNCe may still have active protocol
+        # references to this memory.
+
+        if (
+            session_id in self.active_sessions
+            and session["delivered_pairs"] >= session["requested_pairs"]
+        ):
+            self._close_session(session_id, close_reason="completed")
+
+    # ============================================================
+    # TRAFFIC REPORTING
+    # ============================================================
+
+    def print_traffic_statistics(self) -> None:
         print(
-            f"[{self.node.name}][{now_s:.6f}s] Session {session_id} -> {session['dst']} "
-            f"delivered {session['delivered_pairs']}/{session['requested_pairs']} "
-            f"(memory={info.index}, remote={info.remote_node}, fidelity={info.fidelity:.6f})"
+            f"\n========== TRAFFIC STATISTICS: "
+            f"{self.node.name} ==========\n"
         )
 
-        register_pair_discard(
-            local_node=self.node.name,
-            memory=info.memory,
-            discard_time_ps=now_ps,
-            fidelity_before_reset=info.fidelity,
-            reason="consumed_by_app"
+        elapsed_time_s = (
+            self.node.timeline.now() * 1e-12
         )
 
-        self.node.resource_manager.update(None, info.memory, "RAW")
+        for destination, statistics in (
+            self.flow_statistics.items()
+        ):
+            demand = self.traffic_demands[
+                destination
+            ]
 
-        if session_id in self.active_sessions:
-            if session["delivered_pairs"] >= session["requested_pairs"]:
-                dst = session["dst"]
-                self._close_session(session_id, close_reason="completed")
-                self._schedule_retry(dst, delay_ps=self.parallel_stagger_ps)
+            arrival_rate = self._get_arrival_rate(
+                destination
+            )
+
+            memory_size = int(
+                demand["memory_size"]
+            )
+
+            configured_offered_traffic = (
+                arrival_rate * memory_size
+            )
+
+            mean_interarrival_s = (
+                1.0 / arrival_rate
+            )
+
+            # These variables must be assigned before they are used.
+            arrivals = int(
+                statistics["arrival_events"]
+            )
+
+            admitted = int(
+                statistics["admitted_requests"]
+            )
+
+            blocked = int(
+                statistics["blocked_requests"]
+            )
+
+            requested_pairs = int(
+                statistics["requested_pairs"]
+            )
+
+            admitted_pairs = int(
+                statistics["admitted_pairs"]
+            )
+
+            observed_arrival_rate = (
+                arrivals / elapsed_time_s
+                if elapsed_time_s > 0
+                else 0.0
+            )
+
+            observed_offered_traffic = (
+                requested_pairs / elapsed_time_s
+                if elapsed_time_s > 0
+                else 0.0
+            )
+
+            observed_admitted_traffic = (
+                admitted_pairs / elapsed_time_s
+                if elapsed_time_s > 0
+                else 0.0
+            )
+
+            admission_ratio = (
+                admitted / arrivals
+                if arrivals > 0
+                else 0.0
+            )
+
+            blocking_probability = (
+                blocked / arrivals
+                if arrivals > 0
+                else 0.0
+            )
+
+            print(
+                f"Flow {self.node.name} "
+                f"-> {destination}"
+            )
+
+            print(
+                f"  configured arrival rate : "
+                f"{arrival_rate:.6f} requests/s"
+            )
+
+            print(
+                f"  mean inter-arrival      : "
+                f"{mean_interarrival_s:.6f} s"
+            )
+
+            print(
+                f"  configured traffic      : "
+                f"{configured_offered_traffic:.6f} pairs/s"
+            )
+
+            print(
+                f"  observed arrival rate   : "
+                f"{observed_arrival_rate:.6f} requests/s"
+            )
+
+            print(
+                f"  observed offered traffic: "
+                f"{observed_offered_traffic:.6f} pairs/s"
+            )
+
+            print(
+                f"  observed admitted traffic: "
+                f"{observed_admitted_traffic:.6f} pairs/s"
+            )
+
+            print(
+                f"  arrival events          : "
+                f"{arrivals}"
+            )
+
+            print(
+                f"  admitted requests       : "
+                f"{admitted}"
+            )
+
+            print(
+                f"  blocked requests        : "
+                f"{blocked}"
+            )
+
+            print(
+                f"  admission ratio         : "
+                f"{admission_ratio:.6f}"
+            )
+
+            print(
+                f"  blocking probability    : "
+                f"{blocking_probability:.6f}"
+            )
+
+            print(
+                f"  requested pairs         : "
+                f"{requested_pairs}"
+            )
+
+            print(
+                f"  admitted pairs          : "
+                f"{admitted_pairs}"
+            )
+
+            print()

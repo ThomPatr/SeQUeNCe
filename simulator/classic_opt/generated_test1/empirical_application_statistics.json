@@ -1,0 +1,79 @@
+[
+    {
+        "source": "valrose",
+        "destination": "menton",
+        "arrival_events": 22,
+        "admitted_requests": 22,
+        "blocked_requests": 0,
+        "blocking_probability": 0.0,
+        "requested_pairs": 44,
+        "delivered_pairs": 0,
+        "delivery_ratio": 0.0
+    },
+    {
+        "source": "valrose",
+        "destination": "monaco",
+        "arrival_events": 24,
+        "admitted_requests": 24,
+        "blocked_requests": 0,
+        "blocking_probability": 0.0,
+        "requested_pairs": 48,
+        "delivered_pairs": 0,
+        "delivery_ratio": 0.0
+    },
+    {
+        "source": "cannes",
+        "destination": "menton",
+        "arrival_events": 28,
+        "admitted_requests": 28,
+        "blocked_requests": 0,
+        "blocking_probability": 0.0,
+        "requested_pairs": 56,
+        "delivered_pairs": 0,
+        "delivery_ratio": 0.0
+    },
+    {
+        "source": "grasse",
+        "destination": "nice",
+        "arrival_events": 30,
+        "admitted_requests": 30,
+        "blocked_requests": 0,
+        "blocking_probability": 0.0,
+        "requested_pairs": 60,
+        "delivered_pairs": 0,
+        "delivery_ratio": 0.0
+    },
+    {
+        "source": "ecov",
+        "destination": "valrose",
+        "arrival_events": 16,
+        "admitted_requests": 16,
+        "blocked_requests": 0,
+        "blocking_probability": 0.0,
+        "requested_pairs": 32,
+        "delivered_pairs": 0,
+        "delivery_ratio": 0.0
+    },
+    {
+        "source": "ecov",
+        "destination": "menton",
+        "arrival_events": 8,
+        "admitted_requests": 8,
+        "blocked_requests": 0,
+        "blocking_probability": 0.0,
+        "requested_pairs": 16,
+        "delivered_pairs": 0,
+        "delivery_ratio": 0.0
+    },
+    {
+        "source": "antibes",
+        "destination": "monaco",
+        "arrival_events": 23,
+        "admitted_requests": 23,
+        "blocked_requests": 0,
+        "blocking_probability": 0.0,
+        "requested_pairs": 46,
+        "delivered_pairs": 0,
+        "delivery_ratio": 0.0
+    }
+]

@@ -1,0 +1,32 @@
+{
+    "node_a": "cagnes",
+    "node_b": "cannes",
+    "observation_time_s": 10.0,
+    "eg_attempts": 389538,
+    "eg_successes": 388,
+    "observed_creations": 388,
+    "p_generation": 0.0009960517330786726,
+    "attempt_rate_per_second": 38953.8,
+    "capacity_pairs_per_second": 38.8,
+    "completed_pair_records": 369,
+    "average_observed_lifetime_s": 0.4356128848192683,
+    "traffic": {
+        "interval_s": 0.05,
+        "memory_size": 1,
+        "configured_rate_pairs_per_second": 20.0,
+        "target_fidelity": 0.5,
+        "max_parallel_sessions": 10,
+        "reservation_duration_s": 1.0,
+        "setup_margin_s": 0.05,
+        "arrival_events": 200,
+        "admitted_requests": 200,
+        "blocked_requests": 0,
+        "requested_pairs": 200,
+        "admitted_pairs": 200
+    },
+    "application_results": {
+        "closed_sessions": 200,
+        "completed_sessions": 200,
+        "delivered_pairs": 200
+    }
+}

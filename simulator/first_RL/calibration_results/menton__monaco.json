@@ -1,0 +1,28 @@
+{
+    "node_a": "menton",
+    "node_b": "monaco",
+    "observation_time_s": 9.95,
+    "eg_attempts": 190358,
+    "eg_successes": 1458,
+    "observed_creations": 1458,
+    "p_generation": 0.007659252566217338,
+    "attempt_rate_per_second": 19131.457286432164,
+    "raw_creation_rate_pairs_per_second": 146.53266331658293,
+    "completed_pair_records": 1458,
+    "average_observed_lifetime_s": 0.0,
+    "simulation_duration_s": 10.0,
+    "setup_margin_s": 0.05,
+    "active_duration_s": 9.95,
+    "delivered_pairs": 1458,
+    "service_capacity_pairs_per_second": 146.53266331658293,
+    "traffic": {
+        "reservation_start_s": 0.05,
+        "reservation_end_s": 10.0,
+        "reserved_memories": 10,
+        "target_fidelity": 0.5
+    },
+    "application_results": {
+        "reservation_approved": true,
+        "delivered_pairs": 1458
+    }
+}

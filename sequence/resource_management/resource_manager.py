@@ -145,7 +145,7 @@ class ResourceManager:
         self.waiting_protocols = [] # Protocols that are waiting request from remote resource
         self.memory_to_protocol_map = {}
 
-    def generate_load_rules(self, path: list[str], reservation: Reservation, timecards: list[MemoryTimeCard], memory_array_name: str):
+    def generate_load_rules(self, path: list[str], reservation: Reservation, timecards: list[MemoryTimeCard], memory_array_name: str, enable_purification=True,):
         """Generate and load rules for a given reservation.
 
         Args:
@@ -181,68 +181,66 @@ class ResourceManager:
                            "path": path, "index": index, "name": self.owner.name, "reservation": reservation}
             rule = Rule(10, eg_rule_action_request, eg_rule_condition, action_args, condition_args)
             rules.append(rule)
+        if enable_purification:
+        # 2. Create rules for entanglement purification
+            if index > 0:
+                condition_args = {"memory_indices": memory_indices[:reservation.memory_size], "reservation": reservation, "purification_mode": reservation.purification_mode}
+                action_args = {"reservation": reservation}
+                rule = Rule(10, ep_rule_action_request, ep_rule_condition_request, action_args, condition_args)
+                rules.append(rule)
 
-        # 2. create rules for entanglement purification
-        if index > 0:
-            condition_args = {"memory_indices": memory_indices[:reservation.memory_size], "reservation": reservation,
-                              "purification_mode": reservation.purification_mode}
-            action_args = {}
-            rule = Rule(10, ep_rule_action_request, ep_rule_condition_request, action_args, condition_args)
-            rules.append(rule)
+            if index < len(path) - 1:
+                if index == 0:
+                    condition_args = {"memory_indices": memory_indices, "fidelity": reservation.fidelity, "purification_mode": reservation.purification_mode}
+                else:
+                    condition_args = {"memory_indices": memory_indices[reservation.memory_size:], "fidelity": reservation.fidelity, "purification_mode": reservation.purification_mode}
 
-        if index < len(path) - 1:
-            if index == 0:
-                condition_args = {"memory_indices": memory_indices, "fidelity": reservation.fidelity,
-                                  "purification_mode": reservation.purification_mode}
-            else:
-                condition_args = {"memory_indices": memory_indices[reservation.memory_size:],
-                                  "fidelity": reservation.fidelity,
-                                  "purification_mode": reservation.purification_mode}
+                action_args = {"reservation": reservation}
+                rule = Rule(10, ep_rule_action_await, ep_rule_condition_await, action_args, condition_args)
+                rules.append(rule)
 
-            action_args = {}
-            rule = Rule(10, ep_rule_action_await, ep_rule_condition_await, action_args, condition_args)
-            rules.append(rule)
-
-        # 3. create rules for entanglement swapping
+            # 3. Create rules for entanglement swapping
         if index == 0:
-            condition_args = {"memory_indices": memory_indices, "target_remote": path[-1],
-                              "fidelity": reservation.fidelity}
-            action_args = {}
-            rule = Rule(10, es_rule_action_B, es_rule_condition_B_end, action_args, condition_args)
-            rules.append(rule)
+                condition_args = {"memory_indices": memory_indices, "target_remote": path[-1], "fidelity": reservation.fidelity}
+                action_args = {"reservation": reservation}
+                rule = Rule(10, es_rule_action_B, es_rule_condition_B_end, action_args, condition_args)
+                rules.append(rule)
 
         elif index == len(path) - 1:
-            action_args = {}
-            condition_args = {"memory_indices": memory_indices, "target_remote": path[0],
-                              "fidelity": reservation.fidelity}
-            rule = Rule(10, es_rule_action_B, es_rule_condition_B_end, action_args, condition_args)
-            rules.append(rule)
+                condition_args = {"memory_indices": memory_indices, "target_remote": path[0], "fidelity": reservation.fidelity}
+                action_args = {"reservation": reservation}
+                rule = Rule(10, es_rule_action_B, es_rule_condition_B_end, action_args, condition_args)
+                rules.append(rule)
 
         else:
-            _path = path[:]
-            while _path.index(self.owner.name) % 2 == 0:
-                new_path = []
-                for i, n in enumerate(_path):
-                    if i % 2 == 0 or i == len(_path) - 1:
-                        new_path.append(n)
-                _path = new_path
-            _index = _path.index(self.owner.name)
-            left, right = _path[_index - 1], _path[_index + 1]
+                _path = path[:]
 
-            condition_args = {"memory_indices": memory_indices, "left": left, "right": right,
-                              "fidelity": reservation.fidelity}
-            action_args = {}
-            rule = Rule(10, es_rule_action_A, es_rule_condition_A, action_args, condition_args)
-            rules.append(rule)
+                while _path.index(self.owner.name) % 2 == 0:
+                    new_path = []
 
-            action_args = {}
-            rule = Rule(10, es_rule_action_B, es_rule_condition_B, action_args, condition_args)
-            rules.append(rule)
+                    for i, node_name in enumerate(_path):
+                        if i % 2 == 0 or i == len(_path) - 1:
+                            new_path.append(node_name)
+
+                    _path = new_path
+
+                _index = _path.index(self.owner.name)
+                left = _path[_index - 1]
+                right = _path[_index + 1]
+
+                condition_args = {"memory_indices": memory_indices, "left": left, "right": right, "fidelity": reservation.fidelity}
+                action_args = {"reservation": reservation}
+                rule = Rule(10, es_rule_action_A, es_rule_condition_A, action_args, condition_args)
+                rules.append(rule)
+
+                action_args = {"reservation": reservation}
+                rule = Rule(10, es_rule_action_B, es_rule_condition_B, action_args, condition_args)
+                rules.append(rule)
 
         for rule in rules:
-            rule.set_reservation(reservation)
+                rule.set_reservation(reservation)
 
-        # Load the rules on the timeline
+            # Load the rules on the timeline
         for rule in rules:
             process = Process(self.owner.resource_manager, "load", [rule])
             event = Event(reservation.start_time, process, self.owner.timeline.schedule_counter)
@@ -255,7 +253,7 @@ class ResourceManager:
         for card in timecards:
             if reservation in card.reservations:
                 process = Process(self.owner.resource_manager, "update",
-                                  [None, self.owner.components[memory_array_name][card.memory_index], "RAW"])
+                                    [None, self.owner.components[memory_array_name][card.memory_index], "RAW"])
                 event = Event(reservation.end_time, process, self.owner.timeline.schedule_counter)
                 self.owner.timeline.schedule(event)
 

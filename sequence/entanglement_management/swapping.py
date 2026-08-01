@@ -24,7 +24,11 @@ from .entanglement_protocol import EntanglementProtocol
 from ..utils import log
 from ..components.circuit import Circuit
 from ..resource_management.memory_manager import MemoryInfo
-
+from simulator.first_RL.metrics.protocol_metrics import (
+    record_swapping_attempt,
+    record_swapping_failure,
+    record_swapping_success,
+)
 class SwappingMsgType(Enum):
     """Defines possible message types for entanglement generation."""
 
@@ -63,30 +67,7 @@ class EntanglementSwappingMessage(Message):
 
 
 class EntanglementSwappingA(EntanglementProtocol):
-    """Entanglement swapping protocol for middle router.
-
-    The entanglement swapping protocol is an asymmetric protocol.
-    EntanglementSwappingA should be instantiated on the middle node, where it measures a memory from each pair to be swapped.
-    Results of measurement and swapping are sent to the end routers.
-
-    Variables:
-        EntanglementSwappingA.circuit (Circuit): circuit that does swapping operations.
-
-    Attributes:
-        own (Node): node that protocol instance is attached to.
-        name (str): label for protocol instance.
-        left_memo (Memory): a memory from one pair to be swapped.
-        right_memo (Memory): a memory from the other pair to be swapped.
-        left_node (str): name of node that contains memory entangling with left_memo.
-        left_remote_memo (str): name of memory that entangles with left_memo.
-        right_node (str): name of node that contains memory entangling with right_memo.
-        right_remote_memo (str): name of memory that entangles with right_memo.
-        success_prob (float): probability of a successful swapping operation.
-        degradation (float): degradation factor of memory fidelity after swapping.
-        is_success (bool): flag to show the result of swapping
-        left_protocol_name (str): name of left protocol.
-        right_protocol_name (str): name of right protocol.
-    """
+    """Entanglement-swapping protocol executed by the intermediate router."""
 
     circuit = Circuit(2)
     circuit.cx(0, 1)
@@ -94,169 +75,456 @@ class EntanglementSwappingA(EntanglementProtocol):
     circuit.measure(0)
     circuit.measure(1)
 
-    def __init__(self, owner: "Node", name: str, left_memo: "Memory", right_memo: "Memory", success_prob=1, degradation=0.95):
-        """Constructor for entanglement swapping A protocol.
+    def __init__(
+        self,
+        owner: "Node",
+        name: str,
+        left_memo: "Memory",
+        right_memo: "Memory",
+        success_prob: float = 0.64,
+        degradation: float = 0.95,
+    ):
+        assert left_memo is not right_memo
 
-        Args:
-            owner (Node): node that protocol instance is attached to.
-            name (str): label for swapping protocol instance.
-            left_memo (Memory): memory entangled with a memory on one distant node.
-            right_memo (Memory): memory entangled with a memory on the other distant node.
-            success_prob (float): probability of a successful swapping operation (default 1).
-            degradation (float): degradation factor of memory fidelity after swapping (default 0.95).
-        """
+        super().__init__(owner, name)
 
-        assert left_memo != right_memo
-        EntanglementProtocol.__init__(self, owner, name)
         self.memories = [left_memo, right_memo]
         self.left_memo = left_memo
         self.right_memo = right_memo
-        self.left_node = left_memo.entangled_memory['node_id']
-        self.left_remote_memo = left_memo.entangled_memory['memo_id']
-        self.right_node = right_memo.entangled_memory['node_id']
-        self.right_remote_memo = right_memo.entangled_memory['memo_id']
-        self.success_prob = success_prob
-        self.degradation = degradation
+
+        self.left_node = left_memo.entangled_memory["node_id"]
+        self.left_remote_memo = left_memo.entangled_memory["memo_id"]
+        self.right_node = right_memo.entangled_memory["node_id"]
+        self.right_remote_memo = right_memo.entangled_memory["memo_id"]
+
+        self.success_prob = float(success_prob)
+        self.degradation = float(degradation)
         self.is_success = False
+
         self.left_protocol_name = None
         self.right_protocol_name = None
 
+        # Existing tracking information.
+        self.tracking_source = None
+        self.tracking_destination = None
+        self._tracking_started = False
+        self._tracking_input_fidelity = None
+
+        # Filled by es_rule_action_A when the protocol is created.
+        self.rl_controller = None
+        self.rl_decision_key = None
+        self.rl_reservation = None
+        self._rl_result_notified = False
+
     def is_ready(self) -> bool:
-        """Return True if left_protocol and right_protocol are both set.
-        """
+        return (
+            self.left_protocol_name is not None
+            and self.right_protocol_name is not None
+        )
 
-        return (self.left_protocol_name is not None) and (self.right_protocol_name is not None)
-
-    def set_others(self, protocol: str, node: str, memories: list[str]) -> None:
-        """Method to set other entanglement protocol instance.
-
-        Args:
-            protocol (str): other protocol name.
-            node (str): other node name.
-            memories (list[str]): the list of memories name used on other node.
-        """
-
-        if node == self.left_memo.entangled_memory["node_id"]:
+    def set_others(
+        self,
+        protocol: str,
+        node: str,
+        memories: list[str],
+    ) -> None:
+        if node == self.left_node:
             self.left_protocol_name = protocol
-        elif node == self.right_memo.entangled_memory["node_id"]:
+        elif node == self.right_node:
             self.right_protocol_name = protocol
         else:
-            raise Exception(f"Cannot pair protocol {self.name} with {protocol}")
+            raise ValueError(
+                f"Cannot pair protocol {self.name} "
+                f"with {protocol} on node {node}."
+            )
+
+    # ------------------------------------------------------------------
+    # Tracking
+    # ------------------------------------------------------------------
+
+    def _tracking_flow(self):
+        if (
+            self.tracking_source is None
+            or self.tracking_destination is None
+        ):
+            return None
+
+        return (
+            self.tracking_source,
+            self.tracking_destination,
+        )
+
+    def _record_tracking_attempt(self) -> None:
+        if self._tracking_started:
+            return
+
+        self._tracking_started = True
+        self._tracking_input_fidelity = (
+            float(self.left_memo.fidelity),
+            float(self.right_memo.fidelity),
+        )
+
+        flow = self._tracking_flow()
+
+        if flow is not None:
+            record_swapping_attempt(
+                source=flow[0],
+                destination=flow[1],
+                node_name=self.owner.name,
+            )
+
+    def _record_tracking_success(
+        self,
+        output_fidelity: float,
+    ) -> None:
+        flow = self._tracking_flow()
+
+        if flow is not None:
+            record_swapping_success(
+                source=flow[0],
+                destination=flow[1],
+                output_fidelity=float(output_fidelity),
+                node_name=self.owner.name,
+            )
+
+    def _record_tracking_failure(self) -> None:
+        flow = self._tracking_flow()
+
+        if flow is not None:
+            record_swapping_failure(
+                source=flow[0],
+                destination=flow[1],
+                node_name=self.owner.name,
+            )
+
+    # ------------------------------------------------------------------
+    # Reinforcement-learning callbacks
+    # ------------------------------------------------------------------
+
+    def _is_end_to_end(self) -> bool:
+        """Return True when the new pair connects reservation endpoints."""
+
+        reservation = self.rl_reservation
+
+        if reservation is None:
+            return False
+
+        source = getattr(
+            reservation,
+            "initiator",
+            None,
+        )
+        destination = getattr(
+            reservation,
+            "responder",
+            None,
+        )
+
+        if source is None or destination is None:
+            return False
+
+        swapped_endpoints = {
+            str(self.left_node),
+            str(self.right_node),
+        }
+        reservation_endpoints = {
+            str(source),
+            str(destination),
+        }
+
+        return swapped_endpoints == reservation_endpoints
+
+    def _notify_rl_result(
+        self,
+        success: bool,
+        output_fidelity: float | None = None,
+    ) -> None:
+        """Close the pending SWAP transition exactly once."""
+
+        if self._rl_result_notified:
+            return
+
+        controller = self.rl_controller
+        decision_key = self.rl_decision_key
+
+        if controller is None or decision_key is None:
+            return
+
+        self._rl_result_notified = True
+
+        controller.on_swap_result(
+            decision_key=decision_key,
+            node=self.owner,
+            success=bool(success),
+            output_fidelity=(
+                float(output_fidelity)
+                if output_fidelity is not None
+                else None
+            ),
+            end_to_end=(
+                bool(success)
+                and self._is_end_to_end()
+            ),
+            protocol=self,
+            reservation=self.rl_reservation,
+            terminal=True,
+        )
+
+        self.rl_decision_key = None
+
+    def _notify_rl_interruption(
+        self,
+        reason: str,
+    ) -> None:
+        """Close a pending SWAP that cannot produce a normal result."""
+
+        if self._rl_result_notified:
+            return
+
+        controller = self.rl_controller
+        decision_key = self.rl_decision_key
+
+        if controller is None or decision_key is None:
+            return
+
+        self._rl_result_notified = True
+
+        controller.close_swap_as_terminal(
+            decision_key=decision_key,
+            node=self.owner,
+            reason=reason,
+        )
+
+        self.rl_decision_key = None
+
+    # ------------------------------------------------------------------
+    # Protocol execution
+    # ------------------------------------------------------------------
 
     def start(self) -> None:
-        """Method to start entanglement swapping protocol.
+        """Execute the BSM and send the result to both remote nodes."""
 
-        Will run circuit and send measurement results to other protocols.
+        log.logger.info(
+            f"{self.owner.name} middle protocol {self.name} "
+            f"starts with endpoints "
+            f"{self.left_node} and {self.right_node}"
+        )
 
-        Side Effects:
-            Will call `update_resource_manager` method.
-            Will send messages to other protocols.
-        """
+        assert self.left_memo.fidelity > 0
+        assert self.right_memo.fidelity > 0
+        assert (
+            self.left_memo.entangled_memory["node_id"]
+            == self.left_node
+        )
+        assert (
+            self.right_memo.entangled_memory["node_id"]
+            == self.right_node
+        )
 
-        log.logger.info(f"{self.owner.name} middle protocol start with ends {self.left_node}, {self.right_node}")
+        self._record_tracking_attempt()
 
-        assert self.left_memo.fidelity > 0 and self.right_memo.fidelity > 0
-        assert self.left_memo.entangled_memory["node_id"] == self.left_node
-        assert self.right_memo.entangled_memory["node_id"] == self.right_node
+        swap_succeeded = (
+            self.owner.get_generator().random()
+            < self.success_probability()
+        )
 
-        if self.owner.get_generator().random() < self.success_probability():
-            # swapping succeeded
-            fidelity = self.updated_fidelity(self.left_memo.fidelity, self.right_memo.fidelity)
+        if swap_succeeded:
+            fidelity = self.updated_fidelity(
+                self.left_memo.fidelity,
+                self.right_memo.fidelity,
+            )
+
             self.is_success = True
+            self._record_tracking_success(fidelity)
 
-            expire_time = min(self.left_memo.get_expire_time(), self.right_memo.get_expire_time())
+            expire_time = min(
+                self.left_memo.get_expire_time(),
+                self.right_memo.get_expire_time(),
+            )
 
-            meas_samp = self.owner.get_generator().random()
-            meas_res = self.owner.timeline.quantum_manager.run_circuit(
-                        self.circuit, [self.left_memo.qstate_key, self.right_memo.qstate_key], meas_samp)
-            meas_res = [meas_res[self.left_memo.qstate_key], meas_res[self.right_memo.qstate_key]]
-            
-            log.logger.info(f"{self.name} swapping succeeded, meas_res={meas_res[0]},{meas_res[1]}")
-            
-            msg_l = EntanglementSwappingMessage(SwappingMsgType.SWAP_RES,
-                                                self.left_protocol_name, fidelity=fidelity,
-                                                remote_node=self.right_memo.entangled_memory["node_id"],
-                                                remote_memo=self.right_memo.entangled_memory["memo_id"],
-                                                expire_time=expire_time, meas_res=[])  # empty meas_res
-            msg_r = EntanglementSwappingMessage(SwappingMsgType.SWAP_RES, 
-                                                self.right_protocol_name, fidelity=fidelity,
-                                                remote_node=self.left_memo.entangled_memory["node_id"],
-                                                remote_memo=self.left_memo.entangled_memory["memo_id"],
-                                                expire_time=expire_time, meas_res=meas_res)
+            measurement_sample = (
+                self.owner.get_generator().random()
+            )
+
+            measurement_result = (
+                self.owner.timeline.quantum_manager.run_circuit(
+                    self.circuit,
+                    [
+                        self.left_memo.qstate_key,
+                        self.right_memo.qstate_key,
+                    ],
+                    measurement_sample,
+                )
+            )
+
+            measurement_result = [
+                measurement_result[
+                    self.left_memo.qstate_key
+                ],
+                measurement_result[
+                    self.right_memo.qstate_key
+                ],
+            ]
+
+            log.logger.info(
+                f"{self.name} swapping succeeded, "
+                f"meas_res={measurement_result[0]},"
+                f"{measurement_result[1]}, "
+                f"fidelity={fidelity}"
+            )
+
+            msg_l = EntanglementSwappingMessage(
+                SwappingMsgType.SWAP_RES,
+                self.left_protocol_name,
+                fidelity=fidelity,
+                remote_node=self.right_node,
+                remote_memo=self.right_remote_memo,
+                expire_time=expire_time,
+                meas_res=[],
+            )
+
+            msg_r = EntanglementSwappingMessage(
+                SwappingMsgType.SWAP_RES,
+                self.right_protocol_name,
+                fidelity=fidelity,
+                remote_node=self.left_node,
+                remote_memo=self.left_remote_memo,
+                expire_time=expire_time,
+                meas_res=measurement_result,
+            )
+
+            self._notify_rl_result(
+                success=True,
+                output_fidelity=fidelity,
+            )
+
         else:
-            # swapping failed
-            log.logger.info(f"{self.name} swapping failed")
-            msg_l = EntanglementSwappingMessage(SwappingMsgType.SWAP_RES,self.left_protocol_name, fidelity=0)
-            msg_r = EntanglementSwappingMessage(SwappingMsgType.SWAP_RES, self.right_protocol_name, fidelity=0)
+            log.logger.info(
+                f"{self.name} swapping failed"
+            )
 
-        self.owner.send_message(self.left_node, msg_l)
-        self.owner.send_message(self.right_node, msg_r)
+            self._record_tracking_failure()
 
-        self.update_resource_manager(self.left_memo, MemoryInfo.RAW)
-        self.update_resource_manager(self.right_memo, MemoryInfo.RAW)
+            msg_l = EntanglementSwappingMessage(
+                SwappingMsgType.SWAP_RES,
+                self.left_protocol_name,
+                fidelity=0,
+            )
 
+            msg_r = EntanglementSwappingMessage(
+                SwappingMsgType.SWAP_RES,
+                self.right_protocol_name,
+                fidelity=0,
+            )
+
+            self._notify_rl_result(
+                success=False,
+                output_fidelity=None,
+            )
+
+        self.owner.send_message(
+            self.left_node,
+            msg_l,
+        )
+        self.owner.send_message(
+            self.right_node,
+            msg_r,
+        )
+
+        self.update_resource_manager(
+            self.left_memo,
+            MemoryInfo.RAW,
+        )
+        self.update_resource_manager(
+            self.right_memo,
+            MemoryInfo.RAW,
+        )
 
     def success_probability(self) -> float:
-        """A simple model for BSM success probability."""
-
         return self.success_prob
 
     @lru_cache(maxsize=128)
-    def updated_fidelity(self, f1: float, f2: float) -> float:
-        """A simple model updating fidelity of entanglement.
+    def updated_fidelity(
+        self,
+        f1: float,
+        f2: float,
+    ) -> float:
+        return float(
+            f1 * f2 * self.degradation
+        )
 
-        Args:
-            f1 (float): fidelity 1.
-            f2 (float): fidelity 2.
+    def received_message(
+        self,
+        src: str,
+        msg: "Message",
+    ) -> None:
+        raise RuntimeError(
+            f"EntanglementSwappingA protocol "
+            f"'{self.name}' should not receive messages."
+        )
 
-        Returns:
-            float: fidelity of swapped entanglement.
-        """
+    def memory_expire(
+        self,
+        memory: "Memory",
+    ) -> None:
+        """Release local and remote resources after memory expiration."""
 
-        return f1 * f2 * self.degradation
+        assert not self.is_ready()
 
-    def received_message(self, src: str, msg: "Message") -> None:
-        """Method to receive messages (should not be used on A protocol)."""
+        self._notify_rl_interruption(
+            reason="memory_expired"
+        )
 
-        raise Exception(f"EntanglementSwappingA protocol '{self.name}' should not receive messages.")
-
-    def memory_expire(self, memory: "Memory") -> None:
-        """Method to receive memory expiration events.
-
-        Releases held memories on current node.
-        Memories at the remote node are released as well.
-
-        Args:
-            memory (Memory): memory that expired.
-
-        Side Effects:
-            Will invoke `update` method of attached resource manager.
-            Will invoke `release_remote_protocol` or `release_remote_memory` method of resource manager.
-        """
-
-        assert self.is_ready() is False
         if self.left_protocol_name:
-            self.release_remote_protocol(self.left_node)
+            self.release_remote_protocol(
+                self.left_node
+            )
         else:
-            self.release_remote_memory(self.left_node, self.left_remote_memo)
+            self.release_remote_memory(
+                self.left_node,
+                self.left_remote_memo,
+            )
+
         if self.right_protocol_name:
-            self.release_remote_protocol(self.right_node)
+            self.release_remote_protocol(
+                self.right_node
+            )
         else:
-            self.release_remote_memory(self.right_node, self.right_remote_memo)
+            self.release_remote_memory(
+                self.right_node,
+                self.right_remote_memo,
+            )
 
         for memo in self.memories:
-            if memo == memory:
-                self.update_resource_manager(memo, MemoryInfo.RAW)
-            else:
-                self.update_resource_manager(memo, MemoryInfo.ENTANGLED)
+            state = (
+                MemoryInfo.RAW
+                if memo is memory
+                else MemoryInfo.ENTANGLED
+            )
 
-    def release_remote_protocol(self, remote_node: str):
-        self.owner.resource_manager.release_remote_protocol(remote_node, self)
+            self.update_resource_manager(
+                memo,
+                state,
+            )
 
-    def release_remote_memory(self, remote_node: str, remote_memo: str):
-        self.owner.resource_manager.release_remote_memory(remote_node, remote_memo)
+    def release_remote_protocol(
+        self,
+        remote_node: str,
+    ) -> None:
+        self.owner.resource_manager.release_remote_protocol(
+            remote_node,
+            self,
+        )
 
-
+    def release_remote_memory(
+        self,
+        remote_node: str,
+        remote_memo: str,
+    ) -> None:
+        self.owner.resource_manager.release_remote_memory(
+            remote_node,
+            remote_memo,
+        )
 class EntanglementSwappingB(EntanglementProtocol):
     """Entanglement swapping protocol for end router.
 

@@ -1,0 +1,394 @@
+{
+    "feasible": true,
+    "status_code": 101,
+    "status": "integer optimal solution",
+    "objective": 179.9583725226596,
+    "number_of_nodes": 10,
+    "number_of_links": 14,
+    "swap_probability": 0.64,
+    "offered_traffic_pairs_per_second": 30.775887445887445,
+    "carried_traffic_pairs_per_second": 30.775887445887445,
+    "average_hop_count": 2.459982304694039,
+    "demands": [
+        {
+            "source": 0,
+            "target": 9,
+            "source_name": "valrose",
+            "target_name": "menton",
+            "volume": 5.1,
+            "interval_s": 2.0,
+            "memory_size": 2,
+            "target_fidelity": 0.85
+        },
+        {
+            "source": 0,
+            "target": 8,
+            "source_name": "valrose",
+            "target_name": "monaco",
+            "volume": 3.3999999999999995,
+            "interval_s": 3.0,
+            "memory_size": 2,
+            "target_fidelity": 0.85
+        },
+        {
+            "source": 6,
+            "target": 9,
+            "source_name": "cannes",
+            "target_name": "menton",
+            "volume": 4.08,
+            "interval_s": 2.5,
+            "memory_size": 2,
+            "target_fidelity": 0.85
+        },
+        {
+            "source": 5,
+            "target": 1,
+            "source_name": "grasse",
+            "target_name": "nice",
+            "volume": 5.666666666666667,
+            "interval_s": 1.8,
+            "memory_size": 2,
+            "target_fidelity": 0.85
+        },
+        {
+            "source": 7,
+            "target": 0,
+            "source_name": "ecov",
+            "target_name": "valrose",
+            "volume": 4.25,
+            "interval_s": 2.4,
+            "memory_size": 2,
+            "target_fidelity": 0.85
+        },
+        {
+            "source": 7,
+            "target": 9,
+            "source_name": "ecov",
+            "target_name": "menton",
+            "volume": 3.642857142857143,
+            "interval_s": 2.8,
+            "memory_size": 2,
+            "target_fidelity": 0.85
+        },
+        {
+            "source": 3,
+            "target": 8,
+            "source_name": "antibes",
+            "target_name": "monaco",
+            "volume": 4.636363636363636,
+            "interval_s": 2.2,
+            "memory_size": 2,
+            "target_fidelity": 0.85
+        }
+    ],
+    "routing": [
+        {
+            "demand_index": 0,
+            "source": 0,
+            "target": 9,
+            "path_index": 0,
+            "path": [
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ],
+                [
+                    8,
+                    9
+                ]
+            ],
+            "hop_count": 3,
+            "swap_count": 2,
+            "swap_success_probability": 0.4096,
+            "capacity_consumption_factor": 2.44140625,
+            "allocated_end_to_end_rate": 5.1,
+            "expected_elementary_rate_per_used_link": 12.451171875
+        },
+        {
+            "demand_index": 1,
+            "source": 0,
+            "target": 8,
+            "path_index": 0,
+            "path": [
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ]
+            ],
+            "hop_count": 2,
+            "swap_count": 1,
+            "swap_success_probability": 0.64,
+            "capacity_consumption_factor": 1.5625,
+            "allocated_end_to_end_rate": 3.3999999999999995,
+            "expected_elementary_rate_per_used_link": 5.312499999999999
+        },
+        {
+            "demand_index": 2,
+            "source": 6,
+            "target": 9,
+            "path_index": 0,
+            "path": [
+                [
+                    6,
+                    9
+                ]
+            ],
+            "hop_count": 1,
+            "swap_count": 0,
+            "swap_success_probability": 1.0,
+            "capacity_consumption_factor": 1.0,
+            "allocated_end_to_end_rate": 4.08,
+            "expected_elementary_rate_per_used_link": 4.08
+        },
+        {
+            "demand_index": 3,
+            "source": 5,
+            "target": 1,
+            "path_index": 0,
+            "path": [
+                [
+                    5,
+                    4
+                ],
+                [
+                    4,
+                    1
+                ]
+            ],
+            "hop_count": 2,
+            "swap_count": 1,
+            "swap_success_probability": 0.64,
+            "capacity_consumption_factor": 1.5625,
+            "allocated_end_to_end_rate": 5.666666666666667,
+            "expected_elementary_rate_per_used_link": 8.854166666666668
+        },
+        {
+            "demand_index": 4,
+            "source": 7,
+            "target": 0,
+            "path_index": 0,
+            "path": [
+                [
+                    7,
+                    6
+                ],
+                [
+                    6,
+                    2
+                ],
+                [
+                    2,
+                    1
+                ],
+                [
+                    1,
+                    0
+                ]
+            ],
+            "hop_count": 4,
+            "swap_count": 3,
+            "swap_success_probability": 0.26214400000000004,
+            "capacity_consumption_factor": 3.8146972656249996,
+            "allocated_end_to_end_rate": 4.25,
+            "expected_elementary_rate_per_used_link": 16.212463378906246
+        },
+        {
+            "demand_index": 5,
+            "source": 7,
+            "target": 9,
+            "path_index": 0,
+            "path": [
+                [
+                    7,
+                    4
+                ],
+                [
+                    4,
+                    9
+                ]
+            ],
+            "hop_count": 2,
+            "swap_count": 1,
+            "swap_success_probability": 0.64,
+            "capacity_consumption_factor": 1.5625,
+            "allocated_end_to_end_rate": 3.642857142857143,
+            "expected_elementary_rate_per_used_link": 5.691964285714286
+        },
+        {
+            "demand_index": 6,
+            "source": 3,
+            "target": 8,
+            "path_index": 0,
+            "path": [
+                [
+                    3,
+                    2
+                ],
+                [
+                    2,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ]
+            ],
+            "hop_count": 3,
+            "swap_count": 2,
+            "swap_success_probability": 0.4096,
+            "capacity_consumption_factor": 2.44140625,
+            "allocated_end_to_end_rate": 4.636363636363636,
+            "expected_elementary_rate_per_used_link": 11.319247159090908
+        }
+    ],
+    "link_statistics": [
+        {
+            "edge": [
+                0,
+                1
+            ],
+            "capacity_pairs_per_second": 174.1708542713568,
+            "load_pairs_per_second": 33.97613525390625,
+            "utilization": 0.1950735982552609,
+            "residual_capacity_pairs_per_second": 140.19471901745055
+        },
+        {
+            "edge": [
+                1,
+                2
+            ],
+            "capacity_pairs_per_second": 145.82914572864323,
+            "load_pairs_per_second": 27.531710537997157,
+            "utilization": 0.1887942934893671,
+            "residual_capacity_pairs_per_second": 118.29743519064607
+        },
+        {
+            "edge": [
+                1,
+                4
+            ],
+            "capacity_pairs_per_second": 91.05527638190955,
+            "load_pairs_per_second": 8.854166666666668,
+            "utilization": 0.09723946835908757,
+            "residual_capacity_pairs_per_second": 82.20110971524288
+        },
+        {
+            "edge": [
+                1,
+                8
+            ],
+            "capacity_pairs_per_second": 104.82412060301509,
+            "load_pairs_per_second": 29.082919034090907,
+            "utilization": 0.2774449131248365,
+            "residual_capacity_pairs_per_second": 75.74120156892418
+        },
+        {
+            "edge": [
+                2,
+                3
+            ],
+            "capacity_pairs_per_second": 168.14070351758795,
+            "load_pairs_per_second": 11.319247159090908,
+            "utilization": 0.06732008920080965,
+            "residual_capacity_pairs_per_second": 156.82145635849704
+        },
+        {
+            "edge": [
+                2,
+                6
+            ],
+            "capacity_pairs_per_second": 137.88944723618093,
+            "load_pairs_per_second": 16.212463378906246,
+            "utilization": 0.11757580948988129,
+            "residual_capacity_pairs_per_second": 121.67698385727468
+        },
+        {
+            "edge": [
+                3,
+                4
+            ],
+            "capacity_pairs_per_second": 135.37688442211055,
+            "load_pairs_per_second": 0.0,
+            "utilization": 0.0,
+            "residual_capacity_pairs_per_second": 135.37688442211055
+        },
+        {
+            "edge": [
+                3,
+                6
+            ],
+            "capacity_pairs_per_second": 161.20603015075378,
+            "load_pairs_per_second": 0.0,
+            "utilization": 0.0,
+            "residual_capacity_pairs_per_second": 161.20603015075378
+        },
+        {
+            "edge": [
+                4,
+                5
+            ],
+            "capacity_pairs_per_second": 115.17587939698494,
+            "load_pairs_per_second": 8.854166666666668,
+            "utilization": 0.07687518179173938,
+            "residual_capacity_pairs_per_second": 106.32171273031827
+        },
+        {
+            "edge": [
+                4,
+                7
+            ],
+            "capacity_pairs_per_second": 97.18592964824121,
+            "load_pairs_per_second": 5.691964285714286,
+            "utilization": 0.058567781430048746,
+            "residual_capacity_pairs_per_second": 91.49396536252692
+        },
+        {
+            "edge": [
+                4,
+                9
+            ],
+            "capacity_pairs_per_second": 44.82412060301508,
+            "load_pairs_per_second": 5.691964285714286,
+            "utilization": 0.12698440502882766,
+            "residual_capacity_pairs_per_second": 39.1321563173008
+        },
+        {
+            "edge": [
+                6,
+                7
+            ],
+            "capacity_pairs_per_second": 113.56783919597991,
+            "load_pairs_per_second": 16.212463378906246,
+            "utilization": 0.14275576161072312,
+            "residual_capacity_pairs_per_second": 97.35537581707366
+        },
+        {
+            "edge": [
+                6,
+                9
+            ],
+            "capacity_pairs_per_second": 19.296482412060303,
+            "load_pairs_per_second": 4.08,
+            "utilization": 0.21143749999999997,
+            "residual_capacity_pairs_per_second": 15.216482412060303
+        },
+        {
+            "edge": [
+                8,
+                9
+            ],
+            "capacity_pairs_per_second": 146.13065326633168,
+            "load_pairs_per_second": 12.451171875,
+            "utilization": 0.08520574976358321,
+            "residual_capacity_pairs_per_second": 133.67948139133168
+        }
+    ]
+}

@@ -1,0 +1,6 @@
+{
+    "minimum_samples": 20,
+    "global_average_holding_time_s": null,
+    "node_fallbacks": {},
+    "flows": {}
+}

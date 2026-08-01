@@ -1,0 +1,79 @@
+[
+    {
+        "source": 0,
+        "target": 9,
+        "source_name": "valrose",
+        "target_name": "menton",
+        "arrival_rate_requests_per_s": 0.5,
+        "mean_interarrival_s": 2.0,
+        "memory_size": 2,
+        "volume": 1.0,
+        "target_fidelity": 0.7
+    },
+    {
+        "source": 0,
+        "target": 8,
+        "source_name": "valrose",
+        "target_name": "monaco",
+        "arrival_rate_requests_per_s": 0.3333333333333333,
+        "mean_interarrival_s": 3.0,
+        "memory_size": 2,
+        "volume": 0.6666666666666666,
+        "target_fidelity": 0.7
+    },
+    {
+        "source": 6,
+        "target": 9,
+        "source_name": "cannes",
+        "target_name": "menton",
+        "arrival_rate_requests_per_s": 0.4,
+        "mean_interarrival_s": 2.5,
+        "memory_size": 2,
+        "volume": 0.8,
+        "target_fidelity": 0.7
+    },
+    {
+        "source": 5,
+        "target": 1,
+        "source_name": "grasse",
+        "target_name": "nice",
+        "arrival_rate_requests_per_s": 0.5555555555555556,
+        "mean_interarrival_s": 1.7999999999999998,
+        "memory_size": 2,
+        "volume": 1.1111111111111112,
+        "target_fidelity": 0.7
+    },
+    {
+        "source": 7,
+        "target": 0,
+        "source_name": "ecov",
+        "target_name": "valrose",
+        "arrival_rate_requests_per_s": 0.4166666666666667,
+        "mean_interarrival_s": 2.4,
+        "memory_size": 2,
+        "volume": 0.8333333333333334,
+        "target_fidelity": 0.7
+    },
+    {
+        "source": 7,
+        "target": 9,
+        "source_name": "ecov",
+        "target_name": "menton",
+        "arrival_rate_requests_per_s": 0.35714285714285715,
+        "mean_interarrival_s": 2.8,
+        "memory_size": 2,
+        "volume": 0.7142857142857143,
+        "target_fidelity": 0.7
+    },
+    {
+        "source": 3,
+        "target": 8,
+        "source_name": "antibes",
+        "target_name": "monaco",
+        "arrival_rate_requests_per_s": 0.45454545454545453,
+        "mean_interarrival_s": 2.2,
+        "memory_size": 2,
+        "volume": 0.9090909090909091,
+        "target_fidelity": 0.7
+    }
+]

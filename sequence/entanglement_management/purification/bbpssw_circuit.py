@@ -98,29 +98,66 @@ class BBPSSWCircuit(BBPSSWProtocol):
                                 meas_res=self.meas_res)
         self.owner.send_message(dst, message)
 
-    def received_message(self, src: str, msg: BBPSSWMessage) -> None:
-        """Method to receive messages.
-
-        args:
-            src (str): name of node that sent the message.
-            msg (BBPSSW message): message received.
-
-        Side Effects:
-            Will call `update_resource_manager` method.
+    def received_message(
+        self,
+        src: str,
+        msg: BBPSSWMessage,
+    ) -> None:
         """
+        Receive the remote purification measurement result.
+
+        The purification succeeds when the local and remote measurement
+        outcomes are equal.
+        """
+        purification_succeeded = (
+            self.meas_res == msg.meas_res
+        )
 
         log.logger.info(
-            self.owner.name + " received result message, succeeded: {}".format(
-                self.meas_res == msg.meas_res))
+            self.owner.name
+            + " received result message, succeeded: "
+            + str(purification_succeeded)
+        )
+
         assert src == self.remote_node_name
 
-        self.update_resource_manager(self.meas_memo, "RAW")
-        if self.meas_res == msg.meas_res:
-            self.kept_memo.fidelity = self.improved_fidelity(self.kept_memo.fidelity)
-            self.update_resource_manager(self.kept_memo, state="PURIFIED")
-        else:
-            self.update_resource_manager(self.kept_memo, state="RAW")
+        # The measured memory is always consumed by BBPSSW.
+        self.update_resource_manager(
+            self.meas_memo,
+            "RAW",
+        )
 
+        if purification_succeeded:
+            input_fidelity = float(
+                self.kept_memo.fidelity
+            )
+
+            output_fidelity = (
+                self.improved_fidelity(
+                    input_fidelity
+                )
+            )
+
+            self.kept_memo.fidelity = (
+                output_fidelity
+            )
+
+            self._record_tracking_success(
+                output_fidelity=output_fidelity,
+            )
+
+            self.update_resource_manager(
+                self.kept_memo,
+                state="PURIFIED",
+            )
+
+        else:
+            self._record_tracking_failure()
+
+            self.update_resource_manager(
+                self.kept_memo,
+                state="RAW",
+            )
     @staticmethod
     @lru_cache(maxsize=128)
     def improved_fidelity(f: float) -> float:

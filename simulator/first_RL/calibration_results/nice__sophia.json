@@ -1,0 +1,28 @@
+{
+    "node_a": "nice",
+    "node_b": "sophia",
+    "observation_time_s": 9.95,
+    "eg_attempts": 178056,
+    "eg_successes": 888,
+    "observed_creations": 888,
+    "p_generation": 0.004987195039762771,
+    "attempt_rate_per_second": 17895.075376884422,
+    "raw_creation_rate_pairs_per_second": 89.2462311557789,
+    "completed_pair_records": 888,
+    "average_observed_lifetime_s": 0.0,
+    "simulation_duration_s": 10.0,
+    "setup_margin_s": 0.05,
+    "active_duration_s": 9.95,
+    "delivered_pairs": 888,
+    "service_capacity_pairs_per_second": 89.2462311557789,
+    "traffic": {
+        "reservation_start_s": 0.05,
+        "reservation_end_s": 10.0,
+        "reserved_memories": 10,
+        "target_fidelity": 0.5
+    },
+    "application_results": {
+        "reservation_approved": true,
+        "delivered_pairs": 888
+    }
+}

@@ -1,0 +1,214 @@
+{
+    "metadata": {
+        "description": "Empirical occupied memory-seconds per delivered end-to-end Bell pair, measured with purification disabled.",
+        "duration_s_per_flow": 10.0,
+        "rho": 1.0,
+        "base_seed": 1000,
+        "target_fidelity_override": null,
+        "valid_flows": 7,
+        "invalid_flows": 0
+    },
+    "flows": {
+        "valrose-menton": {
+            "valid": true,
+            "source": "valrose",
+            "destination": "menton",
+            "delivered_pairs": 8,
+            "memory_occupancy_records": 2414,
+            "nodes": {
+                "menton": {
+                    "total_memory_seconds": 12.831657549400004,
+                    "memory_seconds_per_delivered_pair": 1.6039571936750006
+                },
+                "monaco": {
+                    "total_memory_seconds": 17.338199273955006,
+                    "memory_seconds_per_delivered_pair": 2.1672749092443757
+                },
+                "nice": {
+                    "total_memory_seconds": 15.985837624059934,
+                    "memory_seconds_per_delivered_pair": 1.9982297030074918
+                },
+                "valrose": {
+                    "total_memory_seconds": 18.15794150154299,
+                    "memory_seconds_per_delivered_pair": 2.2697426876928737
+                }
+            },
+            "configuration": {
+                "duration_s": 10.0,
+                "rho": 1.0,
+                "seed": 1000,
+                "target_fidelity": 0.6
+            }
+        },
+        "valrose-monaco": {
+            "valid": true,
+            "source": "valrose",
+            "destination": "monaco",
+            "delivered_pairs": 12,
+            "memory_occupancy_records": 2768,
+            "nodes": {
+                "monaco": {
+                    "total_memory_seconds": 14.652630027180049,
+                    "memory_seconds_per_delivered_pair": 1.221052502265004
+                },
+                "nice": {
+                    "total_memory_seconds": 27.1346726199853,
+                    "memory_seconds_per_delivered_pair": 2.261222718332108
+                },
+                "valrose": {
+                    "total_memory_seconds": 34.90031014400799,
+                    "memory_seconds_per_delivered_pair": 2.9083591786673324
+                }
+            },
+            "configuration": {
+                "duration_s": 10.0,
+                "rho": 1.0,
+                "seed": 1001,
+                "target_fidelity": 0.6
+            }
+        },
+        "cannes-menton": {
+            "valid": true,
+            "source": "cannes",
+            "destination": "menton",
+            "delivered_pairs": 4,
+            "memory_occupancy_records": 44,
+            "nodes": {
+                "cannes": {
+                    "total_memory_seconds": 0.8620277370919999,
+                    "memory_seconds_per_delivered_pair": 0.21550693427299997
+                },
+                "menton": {
+                    "total_memory_seconds": 0.7888993030050001,
+                    "memory_seconds_per_delivered_pair": 0.19722482575125003
+                }
+            },
+            "configuration": {
+                "duration_s": 10.0,
+                "rho": 1.0,
+                "seed": 1002,
+                "target_fidelity": 0.6
+            }
+        },
+        "grasse-nice": {
+            "valid": true,
+            "source": "grasse",
+            "destination": "nice",
+            "delivered_pairs": 10,
+            "memory_occupancy_records": 1918,
+            "nodes": {
+                "grasse": {
+                    "total_memory_seconds": 20.224016411151,
+                    "memory_seconds_per_delivered_pair": 2.0224016411151
+                },
+                "nice": {
+                    "total_memory_seconds": 14.115313935859026,
+                    "memory_seconds_per_delivered_pair": 1.4115313935859026
+                },
+                "sophia": {
+                    "total_memory_seconds": 20.763648229302884,
+                    "memory_seconds_per_delivered_pair": 2.0763648229302882
+                }
+            },
+            "configuration": {
+                "duration_s": 10.0,
+                "rho": 1.0,
+                "seed": 1003,
+                "target_fidelity": 0.6
+            }
+        },
+        "ecov-valrose": {
+            "valid": true,
+            "source": "ecov",
+            "destination": "valrose",
+            "delivered_pairs": 10,
+            "memory_occupancy_records": 7200,
+            "nodes": {
+                "cagnes": {
+                    "total_memory_seconds": 37.21556088858586,
+                    "memory_seconds_per_delivered_pair": 3.7215560888585864
+                },
+                "cannes": {
+                    "total_memory_seconds": 17.776674455408887,
+                    "memory_seconds_per_delivered_pair": 1.7776674455408887
+                },
+                "ecov": {
+                    "total_memory_seconds": 14.398820083313982,
+                    "memory_seconds_per_delivered_pair": 1.4398820083313981
+                },
+                "nice": {
+                    "total_memory_seconds": 15.610937980109009,
+                    "memory_seconds_per_delivered_pair": 1.561093798010901
+                },
+                "valrose": {
+                    "total_memory_seconds": 33.059584732869006,
+                    "memory_seconds_per_delivered_pair": 3.3059584732869007
+                }
+            },
+            "configuration": {
+                "duration_s": 10.0,
+                "rho": 1.0,
+                "seed": 1004,
+                "target_fidelity": 0.6
+            }
+        },
+        "ecov-menton": {
+            "valid": true,
+            "source": "ecov",
+            "destination": "menton",
+            "delivered_pairs": 8,
+            "memory_occupancy_records": 810,
+            "nodes": {
+                "ecov": {
+                    "total_memory_seconds": 15.135234811797996,
+                    "memory_seconds_per_delivered_pair": 1.8919043514747496
+                },
+                "menton": {
+                    "total_memory_seconds": 3.0646300960299993,
+                    "memory_seconds_per_delivered_pair": 0.3830787620037499
+                },
+                "sophia": {
+                    "total_memory_seconds": 13.913360442744013,
+                    "memory_seconds_per_delivered_pair": 1.7391700553430016
+                }
+            },
+            "configuration": {
+                "duration_s": 10.0,
+                "rho": 1.0,
+                "seed": 1005,
+                "target_fidelity": 0.6
+            }
+        },
+        "antibes-monaco": {
+            "valid": true,
+            "source": "antibes",
+            "destination": "monaco",
+            "delivered_pairs": 2,
+            "memory_occupancy_records": 1406,
+            "nodes": {
+                "antibes": {
+                    "total_memory_seconds": 6.009174479679011,
+                    "memory_seconds_per_delivered_pair": 3.0045872398395055
+                },
+                "cagnes": {
+                    "total_memory_seconds": 3.749372337864004,
+                    "memory_seconds_per_delivered_pair": 1.874686168932002
+                },
+                "monaco": {
+                    "total_memory_seconds": 2.8724183031159987,
+                    "memory_seconds_per_delivered_pair": 1.4362091515579993
+                },
+                "nice": {
+                    "total_memory_seconds": 6.072390419887001,
+                    "memory_seconds_per_delivered_pair": 3.0361952099435006
+                }
+            },
+            "configuration": {
+                "duration_s": 10.0,
+                "rho": 1.0,
+                "seed": 1006,
+                "target_fidelity": 0.6
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "link_calibration_executed": true,
+    "network_calibration_executed": true,
+    "outputs": {
+        "empirical_link_capacities": "C:\\Users\\thoma\\OneDrive\\Desktop\\Double degree\\Internship\\Internsheep\\Simulator\\SeQUeNCe\\simulator\\classic_opt\\generated\\empirical_link_capacities.json",
+        "memory_occupancy_statistics": "C:\\Users\\thoma\\OneDrive\\Desktop\\Double degree\\Internship\\Internsheep\\Simulator\\SeQUeNCe\\simulator\\classic_opt\\generated\\memory_occupancy_statistics.json",
+        "empirical_memory_holding_times": "C:\\Users\\thoma\\OneDrive\\Desktop\\Double degree\\Internship\\Internsheep\\Simulator\\SeQUeNCe\\simulator\\classic_opt\\generated\\empirical_memory_holding_times.json",
+        "empirical_node_memory_capacities": "C:\\Users\\thoma\\OneDrive\\Desktop\\Double degree\\Internship\\Internsheep\\Simulator\\SeQUeNCe\\simulator\\classic_opt\\generated\\empirical_node_memory_capacities.json",
+        "empirical_application_statistics": "C:\\Users\\thoma\\OneDrive\\Desktop\\Double degree\\Internship\\Internsheep\\Simulator\\SeQUeNCe\\simulator\\classic_opt\\generated\\empirical_application_statistics.json",
+        "empirical_protocol_statistics": "C:\\Users\\thoma\\OneDrive\\Desktop\\Double degree\\Internship\\Internsheep\\Simulator\\SeQUeNCe\\simulator\\classic_opt\\generated\\empirical_protocol_statistics.json",
+        "memory_occupancy_records": "C:\\Users\\thoma\\OneDrive\\Desktop\\Double degree\\Internship\\Internsheep\\Simulator\\SeQUeNCe\\simulator\\classic_opt\\generated\\memory_occupancy_records.json"
+    },
+    "configuration": {
+        "simulation_duration_s": 50.0,
+        "rho": 1.0,
+        "base_traffic_seed": 1000,
+        "target_fidelity": 0.65,
+        "enable_purification": false,
+        "configured_offered_traffic_pairs_per_second": 6.034487734487735
+    }
+}

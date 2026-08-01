@@ -1,0 +1,32 @@
+{
+    "node_a": "cannes",
+    "node_b": "ecov",
+    "observation_time_s": 10.0,
+    "eg_attempts": 321518,
+    "eg_successes": 381,
+    "observed_creations": 381,
+    "p_generation": 0.0011850036389875528,
+    "attempt_rate_per_second": 32151.8,
+    "capacity_pairs_per_second": 38.1,
+    "completed_pair_records": 364,
+    "average_observed_lifetime_s": 0.43203320933615386,
+    "traffic": {
+        "interval_s": 0.05,
+        "memory_size": 1,
+        "configured_rate_pairs_per_second": 20.0,
+        "target_fidelity": 0.5,
+        "max_parallel_sessions": 10,
+        "reservation_duration_s": 1.0,
+        "setup_margin_s": 0.05,
+        "arrival_events": 200,
+        "admitted_requests": 200,
+        "blocked_requests": 0,
+        "requested_pairs": 200,
+        "admitted_pairs": 200
+    },
+    "application_results": {
+        "closed_sessions": 200,
+        "completed_sessions": 200,
+        "delivered_pairs": 200
+    }
+}

@@ -52,7 +52,7 @@ from ..entanglement_management.entanglement_protocol import EntanglementProtocol
 from ..entanglement_management.generation import EntanglementGenerationA
 from ..entanglement_management.purification import BBPSSWProtocol
 from ..entanglement_management.swapping import EntanglementSwappingA, EntanglementSwappingB
-
+from simulator.first_RL.metrics.protocol_metrics import (record_purification_candidate,)
 if TYPE_CHECKING:
     from ..topology.node import Node
     from .memory_manager import MemoryInfo, MemoryManager
@@ -64,7 +64,39 @@ ActionReturn = tuple[EntanglementProtocol, list[str | None], list[RequestFunctio
 TempNode = cast("Node", cast(object, None))
 TempMemory = cast("Memory", cast(object, None))
 
+def attach_flow_tracking(
+    protocol: EntanglementProtocol,
+    reservation,
+) -> None:
+    """
+    Associate a local protocol instance with the end-to-end flow
+    that created it.
 
+    The flow is identified by the reservation initiator and responder.
+    """
+    if reservation is None:
+        protocol.tracking_source = None
+        protocol.tracking_destination = None
+        protocol.tracking_reservation_identity = None
+        return
+
+    protocol.tracking_source = getattr(
+        reservation,
+        "initiator",
+        None,
+    )
+
+    protocol.tracking_destination = getattr(
+        reservation,
+        "responder",
+        None,
+    )
+
+    protocol.tracking_reservation_identity = getattr(
+        reservation,
+        "identity",
+        None,
+    )
 # Entanglement Generation Action-Condition-Match
 def eg_rule_action_await(memories_info: list[MemoryInfo], args: Arguments) -> ActionReturn:
     """Action function used to create an entanglement generation protocol instance and await a Resource Manager request.
@@ -87,6 +119,7 @@ def eg_rule_action_await(memories_info: list[MemoryInfo], args: Arguments) -> Ac
     index = args["index"]
     protocol = EntanglementGenerationA.create(owner=TempNode, name=f"EGA.{memory.name}",
                                               middle=mid, other=path[index - 1], memory=memory)
+    
     return protocol, [None], [None], [None]
 
 
@@ -155,98 +188,245 @@ def eg_match_func(protocols: list[EntanglementProtocol], args: Arguments) -> Ent
     return None
 
 
-# Entanglement Purification Action-Condition-Match
-def ep_rule_action_request(memories_info: list[MemoryInfo], _args: Arguments) -> ActionReturn:
-    """Action function used to create an entanglement purification protocol instance and send a Resource Manager request.
-
-    Rules with this action are created on all nodes other than the initiator, i.e., where args['index'] > 0.
-    The initiator node always creates a request using `ep_rule_action_await`.
-    
-    Args:
-        memories_info: the list of memory info that satisfy the condition function
-        _args: the arguments defined in the rule (not used in this action function)
-
-    Returns:
-        ActionReturn: the protocol to be executed, the destination of the request, the request function,
-            and the arguments for request function
+def ep_rule_action_request(
+    memories_info: list[MemoryInfo],
+    args: Arguments,
+) -> ActionReturn:
     """
-    memories = [info.memory for info in memories_info]
-    name = f"EP.{memories[0].name}.{memories[1].name}"
-    protocol = BBPSSWProtocol.create(TempNode, name, memories[0], memories[1])
-    dsts = [memories_info[0].remote_node]
-    req_funcs: list[RequestFunction | None] = [ep_match_func]
-    req_args = [{"remote_kept": memories_info[0].remote_memo, "remote_meas": memories_info[1].remote_memo}]
-    return protocol, dsts, req_funcs, req_args
-
-
-def ep_rule_action_await(memories_info: list[MemoryInfo], _args: Arguments) -> ActionReturn:
-    """Action function used to create an entanglement purification protocol instance and await a Resource Manager request.
-
-    Rules with this action are created on all nodes other than the responder, i.e., where args['index'] < len(args['path']) - 1.
-    The responder node always creates a request using `ep_rule_action_request`.
-    
-    Args:
-        memories_info: the list of memory info that satisfy the condition function
-        _args: the arguments defined in the rule (not used in this action function)
-
-    Returns:
-        ActionReturn: the protocol to be executed, None, None, None.
-            (this protocol does not send Resource Manager request, but wait for the request from the other node)
+    Create the requesting-side BBPSSW protocol and associate it
+    with the end-to-end reservation flow.
     """
-    memories = [info.memory for info in memories_info]
-    name = "EP.%s" % memories[0].name
-    protocol = BBPSSWProtocol.create(TempNode, name, memories[0], TempMemory)
-    return protocol, [None], [None], [None]
+    memories = [
+        info.memory
+        for info in memories_info
+    ]
 
+    name = (
+        f"EP.{memories[0].name}."
+        f"{memories[1].name}"
+    )
 
-def ep_rule_condition_request(kept_memory: MemoryInfo, memory_manager: MemoryManager, args: Arguments) -> list[MemoryInfo]:
-    """Condition function used by BBPSSW protocol on nodes except the initiator (see `ep_rule_action_request`).
+    protocol = BBPSSWProtocol.create(
+        TempNode,
+        name,
+        memories[0],
+        memories[1],
+    )
 
-    Args:
-        kept_memory: the memory info to be checked
-        memory_manager: the memory manager of the local ndoe,  used to get other memory info
-        args: the arguments defined in the rule.
-            Sould contain "memory_indices", "fidelity", and "purification_mode".
+    reservation = args.get(
+        "reservation"
+    )
 
-    Returns:
-        list[MemoryInfo]: a list of two memory infos (kept_memory and measured_memory) that satisfy the condition
-            for purification.
+    attach_flow_tracking(
+        protocol,
+        reservation,
+    )
+
+    destinations = [
+        memories_info[0].remote_node
+    ]
+
+    request_functions: list[
+        RequestFunction | None
+    ] = [
+        ep_match_func
+    ]
+
+    request_arguments = [
+    {
+        "remote_kept":
+            memories_info[0].remote_memo,
+        "remote_meas":
+            memories_info[1].remote_memo,
+        "tracking_source":
+            getattr(
+                protocol,
+                "tracking_source",
+                None,
+            ),
+        "tracking_destination":
+            getattr(
+                protocol,
+                "tracking_destination",
+                None,
+            ),
+        "tracking_reservation_identity":
+            getattr(
+                protocol,
+                "tracking_reservation_identity",
+                None,
+            ),
+    }
+]
+
+    return (
+        protocol,
+        destinations,
+        request_functions,
+        request_arguments,
+    )
+
+def ep_rule_action_await(
+    memories_info: list[MemoryInfo],
+    args: Arguments,
+) -> ActionReturn:
+    """
+    Create a waiting-side BBPSSW protocol and associate it with
+    the corresponding end-to-end reservation.
+    """
+    memories = [
+        info.memory
+        for info in memories_info
+    ]
+
+    name = f"EP.{memories[0].name}"
+
+    protocol = BBPSSWProtocol.create(
+        TempNode,
+        name,
+        memories[0],
+        TempMemory,
+    )
+
+    reservation = args.get(
+        "reservation"
+    )
+
+    attach_flow_tracking(
+        protocol,
+        reservation,
+    )
+
+    return (
+        protocol,
+        [None],
+        [None],
+        [None],
+    )
+def _get_node_name_from_memory_info(
+    memory_info: MemoryInfo,
+) -> str | None:
+    node = _get_node_from_memory(
+        memory_info.memory
+    )
+
+    if node is None:
+        return None
+
+    return node.name
+def ep_rule_condition_request(
+    kept_memory: MemoryInfo,
+    memory_manager: MemoryManager,
+    args: Arguments,
+) -> list[MemoryInfo]:
+    """
+    Condition function used by the BBPSSW purification protocol
+    on nodes other than the initiator.
     """
     memory_indices = args["memory_indices"]
     reservation = args["reservation"]
     purification_mode = args["purification_mode"]
 
+    def print_purification_conflict(kept: MemoryInfo, measured: MemoryInfo) -> None:
+        kept_memory_object = getattr(kept, "memory", None)
+        measured_memory_object = getattr(measured, "memory", None)
+
+        kept_name = getattr(
+            kept_memory_object,
+            "name",
+            f"memory_index_{getattr(kept, 'index', 'unknown')}",
+        )
+        measured_name = getattr(
+            measured_memory_object,
+            "name",
+            f"memory_index_{getattr(measured, 'index', 'unknown')}",
+        )
+
+        print("\n[PURIFICATION-CONFLICT]")
+        print(f"kept local memory      = {kept_name}")
+        print(f"measured local memory  = {measured_name}")
+        print(f"kept local index       = {getattr(kept, 'index', None)}")
+        print(f"measured local index   = {getattr(measured, 'index', None)}")
+        print(f"kept remote node       = {getattr(kept, 'remote_node', None)}")
+        print(f"measured remote node   = {getattr(measured, 'remote_node', None)}")
+        print(f"kept remote memory     = {getattr(kept, 'remote_memo', None)}")
+        print(f"measured remote memory = {getattr(measured, 'remote_memo', None)}")
+        print(f"kept state             = {getattr(kept, 'state', None)}")
+        print(f"measured state         = {getattr(measured, 'state', None)}")
+        print(f"kept fidelity          = {getattr(kept, 'fidelity', None)}")
+        print(f"measured fidelity      = {getattr(measured, 'fidelity', None)}")
+        print(f"kept entangle time     = {getattr(kept, 'entangle_time', None)}")
+        print(f"measured entangle time = {getattr(measured, 'entangle_time', None)}")
+
     if purification_mode == "until_target":
-        # the first memory is the kept memory during purification
-        if (kept_memory.index in memory_indices
-                and kept_memory.state in ["ENTANGLED", "PURIFIED"]
-                and kept_memory.fidelity < reservation.fidelity):
+        if (
+            kept_memory.index in memory_indices
+            and kept_memory.state in ["ENTANGLED", "PURIFIED"]
+            and kept_memory.fidelity < reservation.fidelity
+        ):
             for measured_memory in memory_manager:
-                # Purification requires kept and measured memory,
-                if (measured_memory != kept_memory
-                        and measured_memory.index in memory_indices
-                        and measured_memory.state in ["ENTANGLED", "PURIFIED"]
-                        and measured_memory.remote_node == kept_memory.remote_node
-                        and measured_memory.fidelity == kept_memory.fidelity):
-                    assert kept_memory.remote_memo != measured_memory.remote_memo
+                if (
+                    measured_memory != kept_memory
+                    and measured_memory.index in memory_indices
+                    and measured_memory.state in ["ENTANGLED", "PURIFIED"]
+                    and measured_memory.remote_node == kept_memory.remote_node
+                    and measured_memory.fidelity == kept_memory.fidelity
+                ):
+                    if kept_memory.remote_memo == measured_memory.remote_memo:
+                        print_purification_conflict(kept_memory, measured_memory)
+                        raise AssertionError(
+                            "Purification selected two local memories that reference the same remote memory."
+                        )
+
+                    source = getattr(reservation, "initiator", None)
+                    destination = getattr(reservation, "responder", None)
+
+                    if source is not None and destination is not None:
+                        record_purification_candidate(
+    source=reservation.initiator,
+    destination=reservation.responder,
+    node_name=_get_node_name_from_memory_info(
+        kept_memory
+    ),
+)
+
                     return [kept_memory, measured_memory]
 
     elif purification_mode == "once":
-        # the first memory is the kept memory during purification
-        if (kept_memory.index in memory_indices
-                and kept_memory.state == "ENTANGLED"
-                and kept_memory.fidelity < reservation.fidelity):
+        if (
+            kept_memory.index in memory_indices
+            and kept_memory.state == "ENTANGLED"
+            and kept_memory.fidelity < reservation.fidelity
+        ):
             for measured_memory in memory_manager:
-                # the second memory is the measured memory during purification
-                if (measured_memory != kept_memory
-                        and measured_memory.index in memory_indices
-                        and measured_memory.state == "ENTANGLED"
-                        and measured_memory.remote_node == kept_memory.remote_node
-                        and measured_memory.fidelity == kept_memory.fidelity):
-                    assert kept_memory.remote_memo != measured_memory.remote_memo
-                    return [kept_memory, measured_memory]
+                if (
+                    measured_memory != kept_memory
+                    and measured_memory.index in memory_indices
+                    and measured_memory.state == "ENTANGLED"
+                    and measured_memory.remote_node == kept_memory.remote_node
+                    and measured_memory.fidelity == kept_memory.fidelity
+                ):
+                    if kept_memory.remote_memo == measured_memory.remote_memo:
+                        print_purification_conflict(kept_memory, measured_memory)
+                        raise AssertionError(
+                            "Purification selected two local memories that reference the same remote memory."
+                        )
 
+                    source = getattr(reservation, "initiator", None)
+                    destination = getattr(reservation, "responder", None)
+
+                    if source is not None and destination is not None:
+                        record_purification_candidate(
+    source=reservation.initiator,
+    destination=reservation.responder,
+    node_name=_get_node_name_from_memory_info(
+        kept_memory
+    ),
+)
+                    return [kept_memory, measured_memory]
+    
     return []
+
 
 
 def ep_rule_condition_await(memory_info: MemoryInfo, _manager: MemoryManager, args: Arguments) -> list[MemoryInfo]:
@@ -318,40 +498,117 @@ def ep_match_func(protocols: list[EntanglementProtocol], args: Arguments) -> BBP
     _protocols[0].memories = [_protocols[0].kept_memo, _protocols[0].meas_memo]
     _protocols[0].name = _protocols[0].name + "." + _protocols[0].meas_memo.name
     _protocols[0].meas_memo.attach(_protocols[0])
+    _protocols[0].tracking_source = args.get(
+    "tracking_source"
+    )
 
+    _protocols[0].tracking_destination = args.get(
+        "tracking_destination"
+    )
+
+    _protocols[0].tracking_reservation_identity = args.get(
+        "tracking_reservation_identity"
+    )
     return _protocols[0]
 
 
-# Entanglement Swapping Action-Condition-Match
-def es_rule_action_A(memories_info: list[MemoryInfo], _args: Arguments) -> ActionReturn:
-    """Action function used to create an EntanglementSwappingA protocol instance on all interior nodes.
-       
-    Interior nodes of a path are the nodes that are neither the initiator nor the responder.
+def es_rule_action_A(
+    memories_info: list[MemoryInfo],
+    args: Arguments,
+) -> ActionReturn:
+    """Create EntanglementSwappingA on an interior node."""
 
-    Since EntanglementSwappingA is always at the center of a swapping attempt, it cannot be located on the initiator
-        or responder node.
-    `es_rule_action_A` additionally initiates the resource manager request for entanglement swapping.
-    
-    Args:
-        memories_info: a list of memory info
-        _args: the arguments defined in the rule (not used in this action function)
-    
-    Returns:
-        ActionReturn: the protocol to be executed, the destination of the request, the request function,
-            and the arguments for request function
-    """
-    # TODO: add es_succ_prob and es_degradation into arguments
-    # es_succ_prob = args["es_succ_prob"]
-    # es_degradation = args["es_degradation"]
-    memories = [info.memory for info in memories_info]
-    protocol = EntanglementSwappingA(TempNode, f"ESA.{memories[0].name}.{memories[1].name}", memories[0], memories[1])
-    dsts = [info.remote_node for info in memories_info]
-    req_funcs: list[RequestFunction | None] = [es_match_func, es_match_func]
-    req_args = [{"target_memo": memories_info[0].remote_memo}, {"target_memo": memories_info[1].remote_memo}]
+    if len(memories_info) != 2:
+        raise ValueError(
+            "EntanglementSwappingA requires exactly two memories."
+        )
+
+    memories = [
+        memory_info.memory
+        for memory_info in memories_info
+    ]
+
+    reservation = args.get("reservation")
+
+    protocol = EntanglementSwappingA(
+        TempNode,
+        f"ESA.{memories[0].name}.{memories[1].name}",
+        memories[0],
+        memories[1],
+        success_prob=0.64,
+    )
+
+    attach_flow_tracking(
+        protocol,
+        reservation,
+    )
+
+    # Retrieve the temporary RL metadata saved by the condition.
+    protocol.rl_decision_key = getattr(
+        memories[0],
+        "rl_decision_key",
+        None,
+    )
+
+    protocol.rl_controller = getattr(
+        memories[0],
+        "rl_controller",
+        None,
+    )
+
+    protocol.rl_reservation = getattr(
+        memories[0],
+        "rl_reservation",
+        reservation,
+    )
+
+    # Remove temporary attributes to avoid reusing stale decisions.
+    for memory in memories:
+        for attribute in (
+            "rl_decision_key",
+            "rl_controller",
+            "rl_reservation",
+        ):
+            if hasattr(memory, attribute):
+                delattr(memory, attribute)
+
+    dsts = [
+        memory_info.remote_node
+        for memory_info in memories_info
+    ]
+
+    req_funcs: list[RequestFunction | None] = [
+        es_match_func,
+        es_match_func,
+    ]
+
+    req_args = [
+        {
+            "target_memo": memories_info[0].remote_memo,
+            "tracking_source": protocol.tracking_source,
+            "tracking_destination": protocol.tracking_destination,
+            "tracking_reservation_identity": getattr(
+                protocol,
+                "tracking_reservation_identity",
+                None,
+            ),
+        },
+        {
+            "target_memo": memories_info[1].remote_memo,
+            "tracking_source": protocol.tracking_source,
+            "tracking_destination": protocol.tracking_destination,
+            "tracking_reservation_identity": getattr(
+                protocol,
+                "tracking_reservation_identity",
+                None,
+            ),
+        },
+    ]
+
     return protocol, dsts, req_funcs, req_args
 
 
-def es_rule_action_B(memories_info: list[MemoryInfo], _args: Arguments) -> ActionReturn:
+def es_rule_action_B(memories_info: list[MemoryInfo], args: Arguments) -> ActionReturn:
     """Action function used to create an EntanglementSwappingB protocol instance on all nodes.
 
     `es_rule_action_B` always awaits the resource manager request for entanglement swapping.
@@ -367,6 +624,8 @@ def es_rule_action_B(memories_info: list[MemoryInfo], _args: Arguments) -> Actio
     memories = [info.memory for info in memories_info]
     memory = memories[0]
     protocol = EntanglementSwappingB(TempNode, "ESB." + memory.name, memory)
+    reservation = args.get("reservation")
+    attach_flow_tracking(protocol, reservation)
     return protocol, [None], [None], [None]
 
 def _get_node_from_memory(memory: Memory) -> Node | None:
@@ -385,93 +644,126 @@ def _get_node_from_memory(memory: Memory) -> Node | None:
 
 
 def _rl_allows_swapping(
-    memory_manager: MemoryManager,
     memory_info_1: MemoryInfo,
-    memory_info_2: MemoryInfo
-) -> bool:
-    """
-    Optional RL gate for entanglement swapping.
-    """
+    memory_info_2: MemoryInfo,
+    reservation=None,
+) -> tuple[bool, Hashable | None]:
+    """Ask the local RL controller whether swapping can be executed."""
 
     node = _get_node_from_memory(memory_info_1.memory)
 
     if node is None:
-        return True
+        return True, None
 
     controller = getattr(node, "rl_swap_controller", None)
 
     if controller is None:
-        return True
+        return True, None
 
-    return controller.decide(
+    execute_swap, decision_key = controller.decide(
         node=node,
         left_memory=memory_info_1.memory,
-        right_memory=memory_info_2.memory
+        right_memory=memory_info_2.memory,
+        reservation=reservation,
     )
-"""
-def _rl_allows_swapping(memory_manager: MemoryManager,
-                        memory_info_1: MemoryInfo,
-                        memory_info_2: MemoryInfo) -> bool:
-    
-    Optional RL gate for entanglement swapping.
 
-    If the node has an rl_swap_controller, the controller decides whether
-    swapping should be performed now or delayed.
-    If no controller is attached, the default SeQUeNCe behavior is preserved.
-    
-    owner = memory_manager.owner
+    return bool(execute_swap), decision_key
 
-    controller = getattr(owner, "rl_swap_controller", None)
 
-    if controller is None:
-        return True
+def _evaluate_rl_swap(
+    memory_info_1: MemoryInfo,
+    memory_info_2: MemoryInfo,
+    reservation=None,
+) -> bool:
+    """
+    Evaluate the RL decision and temporarily attach the decision metadata
+    to the selected memories so that es_rule_action_A can retrieve it.
+    """
 
-    return controller.decide(
-        node=owner,
-        left_memory=memory_info_1.memory,
-        right_memory=memory_info_2.memory
+    execute_swap, decision_key = _rl_allows_swapping(
+        memory_info_1=memory_info_1,
+        memory_info_2=memory_info_2,
+        reservation=reservation,
     )
-"""
 
-def es_rule_condition_A(memory_info: MemoryInfo, memory_manager: MemoryManager, args: Arguments) -> list[MemoryInfo]:
-    """Condition function used for the EntanglementSwappingA protocol on all interior nodes."""
+    if not execute_swap:
+        return False
+
+    node = _get_node_from_memory(memory_info_1.memory)
+    controller = (
+        getattr(node, "rl_swap_controller", None)
+        if node is not None
+        else None
+    )
+
+    for memory_info in (memory_info_1, memory_info_2):
+        memory_info.memory.rl_decision_key = decision_key
+        memory_info.memory.rl_controller = controller
+        memory_info.memory.rl_reservation = reservation
+
+    return True
+
+
+def es_rule_condition_A(
+    memory_info: MemoryInfo,
+    memory_manager: MemoryManager,
+    args: Arguments,
+) -> list[MemoryInfo]:
+    """Condition for EntanglementSwappingA on interior nodes."""
+
     memory_indices = args["memory_indices"]
     remote_left_node = args["left"]
     remote_right_node = args["right"]
-    fidelity = args["fidelity"]
+    minimum_fidelity = args["fidelity"]
+    reservation = args.get("reservation")
 
-    # case 1: memory_info is the left-hand-side memory
-    if (memory_info.state in ["ENTANGLED", "PURIFIED"]
-            and memory_info.index in memory_indices
-            and memory_info.remote_node == remote_left_node
-            and memory_info.fidelity >= fidelity):
+    valid_states = {"ENTANGLED", "PURIFIED"}
 
+    def is_valid_candidate(
+        info: MemoryInfo,
+        expected_remote: str,
+    ) -> bool:
+        return (
+            info.state in valid_states
+            and info.index in memory_indices
+            and info.remote_node == expected_remote
+            and info.fidelity >= minimum_fidelity
+        )
+
+    # memory_info represents the left side.
+    if is_valid_candidate(memory_info, remote_left_node):
         for memory_info_2 in memory_manager:
-            if (memory_info_2 != memory_info
-                    and memory_info_2.state in ["ENTANGLED", "PURIFIED"]
-                    and memory_info_2.index in memory_indices
-                    and memory_info_2.remote_node == remote_right_node
-                    and memory_info_2.fidelity >= fidelity):
-
-                if not _rl_allows_swapping(memory_manager, memory_info, memory_info_2):
+            if (
+                memory_info_2 is not memory_info
+                and is_valid_candidate(
+                    memory_info_2,
+                    remote_right_node,
+                )
+            ):
+                if not _evaluate_rl_swap(
+                    memory_info_1=memory_info,
+                    memory_info_2=memory_info_2,
+                    reservation=reservation,
+                ):
                     return []
 
                 return [memory_info, memory_info_2]
 
-    # case 2: memory_info is the right-hand-side memory
-    if (memory_info.state in ["ENTANGLED", "PURIFIED"]
-            and memory_info.index in memory_indices
-            and memory_info.remote_node == remote_right_node
-            and memory_info.fidelity >= fidelity):
-
+    # memory_info represents the right side.
+    if is_valid_candidate(memory_info, remote_right_node):
         for memory_info_2 in memory_manager:
-            if (memory_info_2 != memory_info
-                    and memory_info_2.state in ["ENTANGLED", "PURIFIED"]
-                    and memory_info_2.index in memory_indices
-                    and memory_info_2.remote_node == remote_left_node
-                    and memory_info_2.fidelity >= fidelity):
-
-                if not _rl_allows_swapping(memory_manager, memory_info, memory_info_2):
+            if (
+                memory_info_2 is not memory_info
+                and is_valid_candidate(
+                    memory_info_2,
+                    remote_left_node,
+                )
+            ):
+                if not _evaluate_rl_swap(
+                    memory_info_1=memory_info,
+                    memory_info_2=memory_info_2,
+                    reservation=reservation,
+                ):
                     return []
 
                 return [memory_info, memory_info_2]
@@ -589,5 +881,8 @@ def es_match_func(protocols: list[EntanglementProtocol], args: Arguments) -> Ent
     target_memo = args["target_memo"]
     for protocol in protocols:
         if isinstance(protocol, EntanglementSwappingB) and protocol.memory.name == target_memo:
+            protocol.tracking_source = args.get("tracking_source")
+            protocol.tracking_destination = args.get("tracking_destination")
+            protocol.tracking_reservation_identity = args.get("tracking_reservation_identity")
             return protocol
     return None

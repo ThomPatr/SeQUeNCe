@@ -1,0 +1,32 @@
+{
+    "node_a": "nice",
+    "node_b": "sophia",
+    "observation_time_s": 10.0,
+    "eg_attempts": 311691,
+    "eg_successes": 380,
+    "observed_creations": 380,
+    "p_generation": 0.0012191561514448604,
+    "attempt_rate_per_second": 31169.1,
+    "capacity_pairs_per_second": 38.0,
+    "completed_pair_records": 362,
+    "average_observed_lifetime_s": 0.41079626419052484,
+    "traffic": {
+        "interval_s": 0.05,
+        "memory_size": 1,
+        "configured_rate_pairs_per_second": 20.0,
+        "target_fidelity": 0.5,
+        "max_parallel_sessions": 10,
+        "reservation_duration_s": 1.0,
+        "setup_margin_s": 0.05,
+        "arrival_events": 200,
+        "admitted_requests": 200,
+        "blocked_requests": 0,
+        "requested_pairs": 200,
+        "admitted_pairs": 200
+    },
+    "application_results": {
+        "closed_sessions": 200,
+        "completed_sessions": 200,
+        "delivered_pairs": 200
+    }
+}

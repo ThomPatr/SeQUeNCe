@@ -1,0 +1,28 @@
+{
+    "node_a": "cagnes",
+    "node_b": "nice",
+    "observation_time_s": 9.95,
+    "eg_attempts": 160750,
+    "eg_successes": 1446,
+    "observed_creations": 1446,
+    "p_generation": 0.00899533437013997,
+    "attempt_rate_per_second": 16155.778894472363,
+    "raw_creation_rate_pairs_per_second": 145.32663316582915,
+    "completed_pair_records": 1446,
+    "average_observed_lifetime_s": 0.0,
+    "simulation_duration_s": 10.0,
+    "setup_margin_s": 0.05,
+    "active_duration_s": 9.95,
+    "delivered_pairs": 1446,
+    "service_capacity_pairs_per_second": 145.32663316582915,
+    "traffic": {
+        "reservation_start_s": 0.05,
+        "reservation_end_s": 10.0,
+        "reserved_memories": 10,
+        "target_fidelity": 0.5
+    },
+    "application_results": {
+        "reservation_approved": true,
+        "delivered_pairs": 1446
+    }
+}

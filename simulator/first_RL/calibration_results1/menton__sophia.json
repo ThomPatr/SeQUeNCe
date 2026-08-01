@@ -1,0 +1,32 @@
+{
+    "node_a": "menton",
+    "node_b": "sophia",
+    "observation_time_s": 10.0,
+    "eg_attempts": 373854,
+    "eg_successes": 355,
+    "observed_creations": 355,
+    "p_generation": 0.0009495685481498125,
+    "attempt_rate_per_second": 37385.4,
+    "capacity_pairs_per_second": 35.5,
+    "completed_pair_records": 339,
+    "average_observed_lifetime_s": 0.3355276861315929,
+    "traffic": {
+        "interval_s": 0.05,
+        "memory_size": 1,
+        "configured_rate_pairs_per_second": 20.0,
+        "target_fidelity": 0.5,
+        "max_parallel_sessions": 10,
+        "reservation_duration_s": 1.0,
+        "setup_margin_s": 0.05,
+        "arrival_events": 200,
+        "admitted_requests": 200,
+        "blocked_requests": 0,
+        "requested_pairs": 200,
+        "admitted_pairs": 200
+    },
+    "application_results": {
+        "closed_sessions": 200,
+        "completed_sessions": 200,
+        "delivered_pairs": 200
+    }
+}

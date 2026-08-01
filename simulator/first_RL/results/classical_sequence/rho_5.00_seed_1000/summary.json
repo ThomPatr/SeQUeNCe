@@ -1,0 +1,22 @@
+{
+    "rho": 5.0,
+    "base_traffic_seed": 1000,
+    "simulation_duration_s": 30.0,
+    "configured_offered_traffic_pairs_per_s": 30.172438672438673,
+    "total_arrival_events": 426,
+    "total_admitted_requests": 359,
+    "total_blocked_requests": 67,
+    "blocking_probability": 0.1572769953051643,
+    "total_requested_pairs": 852,
+    "total_admitted_pairs": 718,
+    "total_delivered_pairs": 242,
+    "offered_delivery_ratio": 0.284037558685446,
+    "admitted_delivery_ratio": 0.3370473537604457,
+    "throughput_pairs_per_s": 8.066666666666666,
+    "total_admitted_sessions": 311,
+    "total_completed_sessions": 121,
+    "completion_probability": 0.3890675241157556,
+    "average_delivered_fidelity": 0.7231423138571429,
+    "average_latency_s": 0.31599706533255534,
+    "open_pair_records_at_end": 78
+}

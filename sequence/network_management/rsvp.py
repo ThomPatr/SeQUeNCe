@@ -85,6 +85,7 @@ class RSVPProtocol(StackProtocol):
         self.memo_arr = owner.components[memory_array_name]
         self.timecards: list[MemoryTimeCard] = []
         self.purification_mode = 'until_target'  # once or until_target. QoS
+        self.enable_purification = True
         self.accepted_reservations = []
 
     def push(self, responder: str, start_time: int, end_time: int, memory_size: int, target_fidelity: float,

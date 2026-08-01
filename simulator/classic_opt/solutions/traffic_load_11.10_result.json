@@ -1,0 +1,938 @@
+{
+    "feasible": true,
+    "status_code": 101,
+    "status": "integer optimal solution",
+    "objective": 391.67410490225916,
+    "number_of_nodes": 10,
+    "number_of_links": 14,
+    "swap_probability": 0.64,
+    "purification_enabled": false,
+    "offered_traffic_pairs_per_second": 66.98281385281386,
+    "carried_traffic_pairs_per_second": 66.98281385281386,
+    "average_hop_count": 2.459982304694038,
+    "maximum_link_utilization": 0.600969726223651,
+    "link_bottleneck_edge": [
+        1,
+        8
+    ],
+    "maximum_node_memory_utilization": 0.032831986607202594,
+    "memory_bottleneck_node": 0,
+    "demands": [
+        {
+            "source": 0,
+            "target": 9,
+            "source_name": "valrose",
+            "target_name": "menton",
+            "arrival_rate_requests_per_s": 5.55,
+            "mean_interarrival_s": 0.1801801801801802,
+            "memory_size": 2,
+            "volume": 11.1,
+            "target_fidelity": 0.6
+        },
+        {
+            "source": 0,
+            "target": 8,
+            "source_name": "valrose",
+            "target_name": "monaco",
+            "arrival_rate_requests_per_s": 3.6999999999999997,
+            "mean_interarrival_s": 0.2702702702702703,
+            "memory_size": 2,
+            "volume": 7.3999999999999995,
+            "target_fidelity": 0.6
+        },
+        {
+            "source": 6,
+            "target": 9,
+            "source_name": "cannes",
+            "target_name": "menton",
+            "arrival_rate_requests_per_s": 4.44,
+            "mean_interarrival_s": 0.2252252252252252,
+            "memory_size": 2,
+            "volume": 8.88,
+            "target_fidelity": 0.6
+        },
+        {
+            "source": 5,
+            "target": 1,
+            "source_name": "grasse",
+            "target_name": "nice",
+            "arrival_rate_requests_per_s": 6.166666666666667,
+            "mean_interarrival_s": 0.16216216216216214,
+            "memory_size": 2,
+            "volume": 12.333333333333334,
+            "target_fidelity": 0.6
+        },
+        {
+            "source": 7,
+            "target": 0,
+            "source_name": "ecov",
+            "target_name": "valrose",
+            "arrival_rate_requests_per_s": 4.625,
+            "mean_interarrival_s": 0.21621621621621623,
+            "memory_size": 2,
+            "volume": 9.25,
+            "target_fidelity": 0.6
+        },
+        {
+            "source": 7,
+            "target": 9,
+            "source_name": "ecov",
+            "target_name": "menton",
+            "arrival_rate_requests_per_s": 3.9642857142857144,
+            "mean_interarrival_s": 0.25225225225225223,
+            "memory_size": 2,
+            "volume": 7.928571428571429,
+            "target_fidelity": 0.6
+        },
+        {
+            "source": 3,
+            "target": 8,
+            "source_name": "antibes",
+            "target_name": "monaco",
+            "arrival_rate_requests_per_s": 5.045454545454545,
+            "mean_interarrival_s": 0.19819819819819823,
+            "memory_size": 2,
+            "volume": 10.09090909090909,
+            "target_fidelity": 0.6
+        }
+    ],
+    "routing": [
+        {
+            "demand_index": 0,
+            "source": 0,
+            "target": 9,
+            "path_index": 0,
+            "path": [
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ],
+                [
+                    8,
+                    9
+                ]
+            ],
+            "node_path": [
+                0,
+                1,
+                8,
+                9
+            ],
+            "hop_count": 3,
+            "swap_count": 2,
+            "swap_success_probability": 0.4096,
+            "swap_consumption_factor": 2.44140625,
+            "edge_capacity_consumption_factors": {
+                "0-1": 2.44140625,
+                "1-8": 2.44140625,
+                "8-9": 2.44140625
+            },
+            "node_holding_times_s": {
+                "0": 0.03549403957535416,
+                "1": 0.01749884204598566,
+                "8": 0.02357324189290879,
+                "9": 0.03317116307667842
+            },
+            "node_holding_time_sources": {
+                "0": "node_fallback",
+                "1": "node_fallback",
+                "8": "node_fallback",
+                "9": "node_fallback"
+            },
+            "objective_coefficient": 7.32421875,
+            "target_fidelity": 0.6,
+            "allocated_end_to_end_rate": 11.1,
+            "expected_elementary_rate_by_link": {
+                "0-1": 27.099609375,
+                "1-8": 27.099609375,
+                "8-9": 27.099609375
+            },
+            "expected_memory_occupancy_by_node": {
+                "0": 0.39398383928643116,
+                "1": 0.19423714671044082,
+                "8": 0.26166298501128754,
+                "9": 0.3681999101511304
+            }
+        },
+        {
+            "demand_index": 1,
+            "source": 0,
+            "target": 8,
+            "path_index": 0,
+            "path": [
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ]
+            ],
+            "node_path": [
+                0,
+                1,
+                8
+            ],
+            "hop_count": 2,
+            "swap_count": 1,
+            "swap_success_probability": 0.64,
+            "swap_consumption_factor": 1.5625,
+            "edge_capacity_consumption_factors": {
+                "0-1": 1.5625,
+                "1-8": 1.5625
+            },
+            "node_holding_times_s": {
+                "0": 0.03549403957535416,
+                "1": 0.01749884204598566,
+                "8": 0.02357324189290879
+            },
+            "node_holding_time_sources": {
+                "0": "node_fallback",
+                "1": "node_fallback",
+                "8": "node_fallback"
+            },
+            "objective_coefficient": 3.125,
+            "target_fidelity": 0.6,
+            "allocated_end_to_end_rate": 7.3999999999999995,
+            "expected_elementary_rate_by_link": {
+                "0-1": 11.5625,
+                "1-8": 11.5625
+            },
+            "expected_memory_occupancy_by_node": {
+                "0": 0.26265589285762075,
+                "1": 0.12949143114029388,
+                "8": 0.17444199000752503
+            }
+        },
+        {
+            "demand_index": 2,
+            "source": 6,
+            "target": 9,
+            "path_index": 0,
+            "path": [
+                [
+                    6,
+                    9
+                ]
+            ],
+            "node_path": [
+                6,
+                9
+            ],
+            "hop_count": 1,
+            "swap_count": 0,
+            "swap_success_probability": 1.0,
+            "swap_consumption_factor": 1.0,
+            "edge_capacity_consumption_factors": {
+                "6-9": 1.0
+            },
+            "node_holding_times_s": {
+                "6": 0.01698587131994729,
+                "9": 0.03317116307667842
+            },
+            "node_holding_time_sources": {
+                "6": "node_fallback",
+                "9": "node_fallback"
+            },
+            "objective_coefficient": 1.0,
+            "target_fidelity": 0.6,
+            "allocated_end_to_end_rate": 8.88,
+            "expected_elementary_rate_by_link": {
+                "6-9": 8.88
+            },
+            "expected_memory_occupancy_by_node": {
+                "6": 0.15083453732113195,
+                "9": 0.29455992812090437
+            }
+        },
+        {
+            "demand_index": 3,
+            "source": 5,
+            "target": 1,
+            "path_index": 0,
+            "path": [
+                [
+                    5,
+                    4
+                ],
+                [
+                    4,
+                    1
+                ]
+            ],
+            "node_path": [
+                5,
+                4,
+                1
+            ],
+            "hop_count": 2,
+            "swap_count": 1,
+            "swap_success_probability": 0.64,
+            "swap_consumption_factor": 1.5625,
+            "edge_capacity_consumption_factors": {
+                "4-5": 1.5625,
+                "1-4": 1.5625
+            },
+            "node_holding_times_s": {
+                "5": 0.035871535656838115,
+                "4": 0.024156237963403323,
+                "1": 0.01749884204598566
+            },
+            "node_holding_time_sources": {
+                "5": "node_fallback",
+                "4": "node_fallback",
+                "1": "node_fallback"
+            },
+            "objective_coefficient": 3.125,
+            "target_fidelity": 0.6,
+            "allocated_end_to_end_rate": 12.333333333333334,
+            "expected_elementary_rate_by_link": {
+                "4-5": 19.270833333333336,
+                "1-4": 19.270833333333336
+            },
+            "expected_memory_occupancy_by_node": {
+                "5": 0.44241560643433675,
+                "4": 0.2979269348819743,
+                "1": 0.21581905190048983
+            }
+        },
+        {
+            "demand_index": 4,
+            "source": 7,
+            "target": 0,
+            "path_index": 0,
+            "path": [
+                [
+                    7,
+                    6
+                ],
+                [
+                    6,
+                    2
+                ],
+                [
+                    2,
+                    1
+                ],
+                [
+                    1,
+                    0
+                ]
+            ],
+            "node_path": [
+                7,
+                6,
+                2,
+                1,
+                0
+            ],
+            "hop_count": 4,
+            "swap_count": 3,
+            "swap_success_probability": 0.26214400000000004,
+            "swap_consumption_factor": 3.8146972656249996,
+            "edge_capacity_consumption_factors": {
+                "6-7": 3.8146972656249996,
+                "2-6": 3.8146972656249996,
+                "1-2": 3.8146972656249996,
+                "0-1": 3.8146972656249996
+            },
+            "node_holding_times_s": {
+                "7": 0.03162899884687026,
+                "6": 0.01698587131994729,
+                "2": 0.011061766219059849,
+                "1": 0.01749884204598566,
+                "0": 0.03549403957535416
+            },
+            "node_holding_time_sources": {
+                "7": "node_fallback",
+                "6": "node_fallback",
+                "2": "node_fallback",
+                "1": "node_fallback",
+                "0": "node_fallback"
+            },
+            "objective_coefficient": 15.258789062499998,
+            "target_fidelity": 0.6,
+            "allocated_end_to_end_rate": 9.25,
+            "expected_elementary_rate_by_link": {
+                "6-7": 35.28594970703124,
+                "2-6": 35.28594970703124,
+                "1-2": 35.28594970703124,
+                "0-1": 35.28594970703124
+            },
+            "expected_memory_occupancy_by_node": {
+                "7": 0.2925682393335499,
+                "6": 0.15711930970951243,
+                "2": 0.10232133752630361,
+                "1": 0.16186428892536736,
+                "0": 0.32831986607202596
+            }
+        },
+        {
+            "demand_index": 5,
+            "source": 7,
+            "target": 9,
+            "path_index": 0,
+            "path": [
+                [
+                    7,
+                    4
+                ],
+                [
+                    4,
+                    9
+                ]
+            ],
+            "node_path": [
+                7,
+                4,
+                9
+            ],
+            "hop_count": 2,
+            "swap_count": 1,
+            "swap_success_probability": 0.64,
+            "swap_consumption_factor": 1.5625,
+            "edge_capacity_consumption_factors": {
+                "4-7": 1.5625,
+                "4-9": 1.5625
+            },
+            "node_holding_times_s": {
+                "7": 0.03162899884687026,
+                "4": 0.024156237963403323,
+                "9": 0.03317116307667842
+            },
+            "node_holding_time_sources": {
+                "7": "node_fallback",
+                "4": "node_fallback",
+                "9": "node_fallback"
+            },
+            "objective_coefficient": 3.125,
+            "target_fidelity": 0.6,
+            "allocated_end_to_end_rate": 7.928571428571429,
+            "expected_elementary_rate_by_link": {
+                "4-7": 12.388392857142858,
+                "4-9": 12.388392857142858
+            },
+            "expected_memory_occupancy_by_node": {
+                "7": 0.25077277657161423,
+                "4": 0.19152445813841207,
+                "9": 0.262999935822236
+            }
+        },
+        {
+            "demand_index": 6,
+            "source": 3,
+            "target": 8,
+            "path_index": 0,
+            "path": [
+                [
+                    3,
+                    2
+                ],
+                [
+                    2,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ]
+            ],
+            "node_path": [
+                3,
+                2,
+                1,
+                8
+            ],
+            "hop_count": 3,
+            "swap_count": 2,
+            "swap_success_probability": 0.4096,
+            "swap_consumption_factor": 2.44140625,
+            "edge_capacity_consumption_factors": {
+                "2-3": 2.44140625,
+                "1-2": 2.44140625,
+                "1-8": 2.44140625
+            },
+            "node_holding_times_s": {
+                "3": 0.022385371532714884,
+                "2": 0.011061766219059849,
+                "1": 0.01749884204598566,
+                "8": 0.02357324189290879
+            },
+            "node_holding_time_sources": {
+                "3": "node_fallback",
+                "2": "node_fallback",
+                "1": "node_fallback",
+                "8": "node_fallback"
+            },
+            "objective_coefficient": 7.32421875,
+            "target_fidelity": 0.6,
+            "allocated_end_to_end_rate": 10.09090909090909,
+            "expected_elementary_rate_by_link": {
+                "2-3": 24.63600852272727,
+                "1-2": 24.63600852272727,
+                "1-8": 24.63600852272727
+            },
+            "expected_memory_occupancy_by_node": {
+                "3": 0.22588874910285017,
+                "2": 0.1116232773014221,
+                "1": 0.17657922428221892,
+                "8": 0.2378754409193523
+            }
+        }
+    ],
+    "link_statistics": [
+        {
+            "edge": [
+                0,
+                1
+            ],
+            "capacity_pairs_per_second": 175.97989949748745,
+            "load_pairs_per_second": 73.94805908203125,
+            "utilization": 0.4202074173993209,
+            "residual_capacity_pairs_per_second": 102.0318404154562
+        },
+        {
+            "edge": [
+                1,
+                2
+            ],
+            "capacity_pairs_per_second": 145.52763819095478,
+            "load_pairs_per_second": 59.921958229758516,
+            "utilization": 0.4117565499903986,
+            "residual_capacity_pairs_per_second": 85.60567996119626
+        },
+        {
+            "edge": [
+                1,
+                4
+            ],
+            "capacity_pairs_per_second": 89.9497487437186,
+            "load_pairs_per_second": 19.270833333333336,
+            "utilization": 0.21423999068901303,
+            "residual_capacity_pairs_per_second": 70.67891541038526
+        },
+        {
+            "edge": [
+                1,
+                8
+            ],
+            "capacity_pairs_per_second": 105.32663316582915,
+            "load_pairs_per_second": 63.298117897727266,
+            "utilization": 0.600969726223651,
+            "residual_capacity_pairs_per_second": 42.028515268101884
+        },
+        {
+            "edge": [
+                2,
+                3
+            ],
+            "capacity_pairs_per_second": 167.7386934673367,
+            "load_pairs_per_second": 24.63600852272727,
+            "utilization": 0.14687135098929677,
+            "residual_capacity_pairs_per_second": 143.10268494460942
+        },
+        {
+            "edge": [
+                2,
+                6
+            ],
+            "capacity_pairs_per_second": 133.96984924623118,
+            "load_pairs_per_second": 35.28594970703124,
+            "utilization": 0.2633872465003457,
+            "residual_capacity_pairs_per_second": 98.68389953919993
+        },
+        {
+            "edge": [
+                3,
+                4
+            ],
+            "capacity_pairs_per_second": 136.58291457286433,
+            "load_pairs_per_second": 0.0,
+            "utilization": 0.0,
+            "residual_capacity_pairs_per_second": 136.58291457286433
+        },
+        {
+            "edge": [
+                3,
+                6
+            ],
+            "capacity_pairs_per_second": 164.42211055276383,
+            "load_pairs_per_second": 0.0,
+            "utilization": 0.0,
+            "residual_capacity_pairs_per_second": 164.42211055276383
+        },
+        {
+            "edge": [
+                4,
+                5
+            ],
+            "capacity_pairs_per_second": 114.37185929648243,
+            "load_pairs_per_second": 19.270833333333336,
+            "utilization": 0.1684927870533099,
+            "residual_capacity_pairs_per_second": 95.10102596314908
+        },
+        {
+            "edge": [
+                4,
+                7
+            ],
+            "capacity_pairs_per_second": 97.18592964824121,
+            "load_pairs_per_second": 12.388392857142858,
+            "utilization": 0.12747105370069434,
+            "residual_capacity_pairs_per_second": 84.79753679109835
+        },
+        {
+            "edge": [
+                4,
+                9
+            ],
+            "capacity_pairs_per_second": 44.62311557788945,
+            "load_pairs_per_second": 12.388392857142858,
+            "utilization": 0.27762276785714285,
+            "residual_capacity_pairs_per_second": 32.23472272074659
+        },
+        {
+            "edge": [
+                6,
+                7
+            ],
+            "capacity_pairs_per_second": 111.45728643216081,
+            "load_pairs_per_second": 35.28594970703124,
+            "utilization": 0.31658719529753004,
+            "residual_capacity_pairs_per_second": 76.17133672512958
+        },
+        {
+            "edge": [
+                6,
+                9
+            ],
+            "capacity_pairs_per_second": 20.7035175879397,
+            "load_pairs_per_second": 8.88,
+            "utilization": 0.4289126213592233,
+            "residual_capacity_pairs_per_second": 11.8235175879397
+        },
+        {
+            "edge": [
+                8,
+                9
+            ],
+            "capacity_pairs_per_second": 145.92964824120605,
+            "load_pairs_per_second": 27.099609375,
+            "utilization": 0.1857032460614669,
+            "residual_capacity_pairs_per_second": 118.83003886620605
+        }
+    ],
+    "node_statistics": [
+        {
+            "node": 0,
+            "memory_capacity": 30.0,
+            "expected_memory_occupancy": 0.9849595982160779,
+            "memory_utilization": 0.032831986607202594,
+            "residual_memory_capacity": 29.01504040178392,
+            "flow_contributions": [
+                {
+                    "source": 0,
+                    "target": 9,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 11.1,
+                    "holding_time_s": 0.03549403957535416,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.39398383928643116
+                },
+                {
+                    "source": 0,
+                    "target": 8,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 7.3999999999999995,
+                    "holding_time_s": 0.03549403957535416,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.26265589285762075
+                },
+                {
+                    "source": 7,
+                    "target": 0,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 9.25,
+                    "holding_time_s": 0.03549403957535416,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.32831986607202596
+                }
+            ]
+        },
+        {
+            "node": 1,
+            "memory_capacity": 30.0,
+            "expected_memory_occupancy": 0.8779911429588109,
+            "memory_utilization": 0.029266371431960363,
+            "residual_memory_capacity": 29.122008857041187,
+            "flow_contributions": [
+                {
+                    "source": 0,
+                    "target": 9,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 11.1,
+                    "holding_time_s": 0.01749884204598566,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.19423714671044082
+                },
+                {
+                    "source": 0,
+                    "target": 8,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 7.3999999999999995,
+                    "holding_time_s": 0.01749884204598566,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.12949143114029388
+                },
+                {
+                    "source": 5,
+                    "target": 1,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 12.333333333333334,
+                    "holding_time_s": 0.01749884204598566,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.21581905190048983
+                },
+                {
+                    "source": 7,
+                    "target": 0,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 9.25,
+                    "holding_time_s": 0.01749884204598566,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.16186428892536736
+                },
+                {
+                    "source": 3,
+                    "target": 8,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 10.09090909090909,
+                    "holding_time_s": 0.01749884204598566,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.17657922428221892
+                }
+            ]
+        },
+        {
+            "node": 2,
+            "memory_capacity": 30.0,
+            "expected_memory_occupancy": 0.2139446148277257,
+            "memory_utilization": 0.00713148716092419,
+            "residual_memory_capacity": 29.786055385172276,
+            "flow_contributions": [
+                {
+                    "source": 7,
+                    "target": 0,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 9.25,
+                    "holding_time_s": 0.011061766219059849,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.10232133752630361
+                },
+                {
+                    "source": 3,
+                    "target": 8,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 10.09090909090909,
+                    "holding_time_s": 0.011061766219059849,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.1116232773014221
+                }
+            ]
+        },
+        {
+            "node": 3,
+            "memory_capacity": 30.0,
+            "expected_memory_occupancy": 0.22588874910285017,
+            "memory_utilization": 0.007529624970095006,
+            "residual_memory_capacity": 29.77411125089715,
+            "flow_contributions": [
+                {
+                    "source": 3,
+                    "target": 8,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 10.09090909090909,
+                    "holding_time_s": 0.022385371532714884,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.22588874910285017
+                }
+            ]
+        },
+        {
+            "node": 4,
+            "memory_capacity": 40.0,
+            "expected_memory_occupancy": 0.48945139302038637,
+            "memory_utilization": 0.012236284825509659,
+            "residual_memory_capacity": 39.51054860697961,
+            "flow_contributions": [
+                {
+                    "source": 5,
+                    "target": 1,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 12.333333333333334,
+                    "holding_time_s": 0.024156237963403323,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.2979269348819743
+                },
+                {
+                    "source": 7,
+                    "target": 9,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 7.928571428571429,
+                    "holding_time_s": 0.024156237963403323,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.19152445813841207
+                }
+            ]
+        },
+        {
+            "node": 5,
+            "memory_capacity": 30.0,
+            "expected_memory_occupancy": 0.44241560643433675,
+            "memory_utilization": 0.014747186881144559,
+            "residual_memory_capacity": 29.557584393565662,
+            "flow_contributions": [
+                {
+                    "source": 5,
+                    "target": 1,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 12.333333333333334,
+                    "holding_time_s": 0.035871535656838115,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.44241560643433675
+                }
+            ]
+        },
+        {
+            "node": 6,
+            "memory_capacity": 30.0,
+            "expected_memory_occupancy": 0.3079538470306444,
+            "memory_utilization": 0.010265128234354813,
+            "residual_memory_capacity": 29.692046152969354,
+            "flow_contributions": [
+                {
+                    "source": 6,
+                    "target": 9,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 8.88,
+                    "holding_time_s": 0.01698587131994729,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.15083453732113195
+                },
+                {
+                    "source": 7,
+                    "target": 0,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 9.25,
+                    "holding_time_s": 0.01698587131994729,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.15711930970951243
+                }
+            ]
+        },
+        {
+            "node": 7,
+            "memory_capacity": 35.0,
+            "expected_memory_occupancy": 0.5433410159051641,
+            "memory_utilization": 0.015524029025861833,
+            "residual_memory_capacity": 34.45665898409484,
+            "flow_contributions": [
+                {
+                    "source": 7,
+                    "target": 0,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 9.25,
+                    "holding_time_s": 0.03162899884687026,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.2925682393335499
+                },
+                {
+                    "source": 7,
+                    "target": 9,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 7.928571428571429,
+                    "holding_time_s": 0.03162899884687026,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.25077277657161423
+                }
+            ]
+        },
+        {
+            "node": 8,
+            "memory_capacity": 30.0,
+            "expected_memory_occupancy": 0.6739804159381648,
+            "memory_utilization": 0.022466013864605495,
+            "residual_memory_capacity": 29.326019584061836,
+            "flow_contributions": [
+                {
+                    "source": 0,
+                    "target": 9,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 11.1,
+                    "holding_time_s": 0.02357324189290879,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.26166298501128754
+                },
+                {
+                    "source": 0,
+                    "target": 8,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 7.3999999999999995,
+                    "holding_time_s": 0.02357324189290879,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.17444199000752503
+                },
+                {
+                    "source": 3,
+                    "target": 8,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 10.09090909090909,
+                    "holding_time_s": 0.02357324189290879,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.2378754409193523
+                }
+            ]
+        },
+        {
+            "node": 9,
+            "memory_capacity": 30.0,
+            "expected_memory_occupancy": 0.9257597740942708,
+            "memory_utilization": 0.030858659136475692,
+            "residual_memory_capacity": 29.07424022590573,
+            "flow_contributions": [
+                {
+                    "source": 0,
+                    "target": 9,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 11.1,
+                    "holding_time_s": 0.03317116307667842,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.3681999101511304
+                },
+                {
+                    "source": 6,
+                    "target": 9,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 8.88,
+                    "holding_time_s": 0.03317116307667842,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.29455992812090437
+                },
+                {
+                    "source": 7,
+                    "target": 9,
+                    "path_index": 0,
+                    "allocated_rate_pairs_per_s": 7.928571428571429,
+                    "holding_time_s": 0.03317116307667842,
+                    "holding_time_source": "node_fallback",
+                    "expected_memory_occupancy": 0.262999935822236
+                }
+            ]
+        }
+    ]
+}

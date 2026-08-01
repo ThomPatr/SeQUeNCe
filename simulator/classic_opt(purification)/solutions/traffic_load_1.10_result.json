@@ -1,0 +1,1248 @@
+{
+    "feasible": true,
+    "status_code": 101,
+    "status": "integer optimal solution",
+    "objective": 74.81469864648005,
+    "number_of_nodes": 10,
+    "number_of_links": 14,
+    "swap_probability": 0.64,
+    "use_fidelity_constraints": true,
+    "max_purification_rounds": 3,
+    "offered_traffic_pairs_per_second": 6.637936507936509,
+    "carried_traffic_pairs_per_second": 6.637936507936509,
+    "average_hop_count": 2.4599823046940386,
+    "demands": [
+        {
+            "source": 0,
+            "target": 9,
+            "source_name": "valrose",
+            "target_name": "menton",
+            "arrival_rate_requests_per_s": 0.55,
+            "mean_interarrival_s": 1.8181818181818181,
+            "memory_size": 2,
+            "volume": 1.1,
+            "target_fidelity": 0.7
+        },
+        {
+            "source": 0,
+            "target": 8,
+            "source_name": "valrose",
+            "target_name": "monaco",
+            "arrival_rate_requests_per_s": 0.3666666666666667,
+            "mean_interarrival_s": 2.727272727272727,
+            "memory_size": 2,
+            "volume": 0.7333333333333334,
+            "target_fidelity": 0.7
+        },
+        {
+            "source": 6,
+            "target": 9,
+            "source_name": "cannes",
+            "target_name": "menton",
+            "arrival_rate_requests_per_s": 0.44000000000000006,
+            "mean_interarrival_s": 2.2727272727272725,
+            "memory_size": 2,
+            "volume": 0.8800000000000001,
+            "target_fidelity": 0.7
+        },
+        {
+            "source": 5,
+            "target": 1,
+            "source_name": "grasse",
+            "target_name": "nice",
+            "arrival_rate_requests_per_s": 0.6111111111111112,
+            "mean_interarrival_s": 1.6363636363636362,
+            "memory_size": 2,
+            "volume": 1.2222222222222223,
+            "target_fidelity": 0.7
+        },
+        {
+            "source": 7,
+            "target": 0,
+            "source_name": "ecov",
+            "target_name": "valrose",
+            "arrival_rate_requests_per_s": 0.45833333333333337,
+            "mean_interarrival_s": 2.1818181818181817,
+            "memory_size": 2,
+            "volume": 0.9166666666666667,
+            "target_fidelity": 0.7
+        },
+        {
+            "source": 7,
+            "target": 9,
+            "source_name": "ecov",
+            "target_name": "menton",
+            "arrival_rate_requests_per_s": 0.3928571428571429,
+            "mean_interarrival_s": 2.545454545454545,
+            "memory_size": 2,
+            "volume": 0.7857142857142858,
+            "target_fidelity": 0.7
+        },
+        {
+            "source": 3,
+            "target": 8,
+            "source_name": "antibes",
+            "target_name": "monaco",
+            "arrival_rate_requests_per_s": 0.5,
+            "mean_interarrival_s": 2.0,
+            "memory_size": 2,
+            "volume": 1.0,
+            "target_fidelity": 0.7
+        }
+    ],
+    "routing": [
+        {
+            "demand_index": 0,
+            "source": 0,
+            "target": 9,
+            "path_index": 0,
+            "path": [
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ],
+                [
+                    8,
+                    9
+                ]
+            ],
+            "hop_count": 3,
+            "swap_count": 2,
+            "swap_success_probability": 0.4096,
+            "edge_capacity_consumption_factors": {
+                "0-1": 2.44140625,
+                "1-8": 2.44140625,
+                "8-9": 5.7256244136960595
+            },
+            "objective_coefficient": 10.60843691369606,
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.7156562851782364,
+            "purification_profile": {
+                "path": [
+                    0,
+                    1,
+                    8,
+                    9
+                ],
+                "target_fidelity": 0.7,
+                "estimated_path_fidelity": 0.7156562851782364,
+                "link_profiles": [
+                    {
+                        "edge": [
+                            0,
+                            1
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    },
+                    {
+                        "edge": [
+                            1,
+                            8
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    },
+                    {
+                        "edge": [
+                            8,
+                            9
+                        ],
+                        "rounds": 1,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.9099437148217636,
+                        "expected_raw_pairs": 2.345215759849906,
+                        "round_success_probabilities": [
+                            0.8528
+                        ]
+                    }
+                ],
+                "link_consumption_factors": {
+                    "0-1": 1.0,
+                    "1-8": 1.0,
+                    "8-9": 2.345215759849906
+                },
+                "objective_cost": 4.345215759849906,
+                "total_expected_raw_link_pairs": 4.345215759849906,
+                "admissible": true
+            },
+            "allocated_end_to_end_rate": 1.1,
+            "expected_elementary_rate_by_link": {
+                "0-1": 2.685546875,
+                "1-8": 2.685546875,
+                "8-9": 6.298186855065666
+            }
+        },
+        {
+            "demand_index": 1,
+            "source": 0,
+            "target": 8,
+            "path_index": 0,
+            "path": [
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ]
+            ],
+            "hop_count": 2,
+            "swap_count": 1,
+            "swap_success_probability": 0.64,
+            "edge_capacity_consumption_factors": {
+                "0-1": 1.5625,
+                "1-8": 1.5625
+            },
+            "objective_coefficient": 3.125,
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.7791999999999999,
+            "purification_profile": {
+                "path": [
+                    0,
+                    1,
+                    8
+                ],
+                "target_fidelity": 0.7,
+                "estimated_path_fidelity": 0.7791999999999999,
+                "link_profiles": [
+                    {
+                        "edge": [
+                            0,
+                            1
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    },
+                    {
+                        "edge": [
+                            1,
+                            8
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    }
+                ],
+                "link_consumption_factors": {
+                    "0-1": 1.0,
+                    "1-8": 1.0
+                },
+                "objective_cost": 2.0,
+                "total_expected_raw_link_pairs": 2.0,
+                "admissible": true
+            },
+            "allocated_end_to_end_rate": 0.7333333333333334,
+            "expected_elementary_rate_by_link": {
+                "0-1": 1.1458333333333335,
+                "1-8": 1.1458333333333335
+            }
+        },
+        {
+            "demand_index": 2,
+            "source": 6,
+            "target": 9,
+            "path_index": 0,
+            "path": [
+                [
+                    6,
+                    9
+                ]
+            ],
+            "hop_count": 1,
+            "swap_count": 0,
+            "swap_success_probability": 1.0,
+            "edge_capacity_consumption_factors": {
+                "6-9": 1.0
+            },
+            "objective_coefficient": 1.0,
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.88,
+            "purification_profile": {
+                "path": [
+                    6,
+                    9
+                ],
+                "target_fidelity": 0.7,
+                "estimated_path_fidelity": 0.88,
+                "link_profiles": [
+                    {
+                        "edge": [
+                            6,
+                            9
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    }
+                ],
+                "link_consumption_factors": {
+                    "6-9": 1.0
+                },
+                "objective_cost": 1.0,
+                "total_expected_raw_link_pairs": 1.0,
+                "admissible": true
+            },
+            "allocated_end_to_end_rate": 0.8800000000000001,
+            "expected_elementary_rate_by_link": {
+                "6-9": 0.8800000000000001
+            }
+        },
+        {
+            "demand_index": 3,
+            "source": 5,
+            "target": 1,
+            "path_index": 0,
+            "path": [
+                [
+                    5,
+                    4
+                ],
+                [
+                    4,
+                    1
+                ]
+            ],
+            "hop_count": 2,
+            "swap_count": 1,
+            "swap_success_probability": 0.64,
+            "edge_capacity_consumption_factors": {
+                "4-5": 1.5625,
+                "1-4": 1.5625
+            },
+            "objective_coefficient": 3.125,
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.7791999999999999,
+            "purification_profile": {
+                "path": [
+                    5,
+                    4,
+                    1
+                ],
+                "target_fidelity": 0.7,
+                "estimated_path_fidelity": 0.7791999999999999,
+                "link_profiles": [
+                    {
+                        "edge": [
+                            4,
+                            5
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    },
+                    {
+                        "edge": [
+                            1,
+                            4
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    }
+                ],
+                "link_consumption_factors": {
+                    "4-5": 1.0,
+                    "1-4": 1.0
+                },
+                "objective_cost": 2.0,
+                "total_expected_raw_link_pairs": 2.0,
+                "admissible": true
+            },
+            "allocated_end_to_end_rate": 1.2222222222222223,
+            "expected_elementary_rate_by_link": {
+                "4-5": 1.9097222222222223,
+                "1-4": 1.9097222222222223
+            }
+        },
+        {
+            "demand_index": 4,
+            "source": 7,
+            "target": 0,
+            "path_index": 0,
+            "path": [
+                [
+                    7,
+                    6
+                ],
+                [
+                    6,
+                    2
+                ],
+                [
+                    2,
+                    1
+                ],
+                [
+                    1,
+                    0
+                ]
+            ],
+            "hop_count": 4,
+            "swap_count": 3,
+            "swap_success_probability": 0.26214400000000004,
+            "edge_capacity_consumption_factors": {
+                "6-7": 8.946288146400093,
+                "2-6": 8.946288146400093,
+                "1-2": 8.946288146400093,
+                "0-1": 20.168967786708908
+            },
+            "objective_coefficient": 47.00783222590918,
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.716249953781153,
+            "purification_profile": {
+                "path": [
+                    7,
+                    6,
+                    2,
+                    1,
+                    0
+                ],
+                "target_fidelity": 0.7,
+                "estimated_path_fidelity": 0.716249953781153,
+                "link_profiles": [
+                    {
+                        "edge": [
+                            6,
+                            7
+                        ],
+                        "rounds": 1,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.9099437148217636,
+                        "expected_raw_pairs": 2.345215759849906,
+                        "round_success_probabilities": [
+                            0.8528
+                        ]
+                    },
+                    {
+                        "edge": [
+                            2,
+                            6
+                        ],
+                        "rounds": 1,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.9099437148217636,
+                        "expected_raw_pairs": 2.345215759849906,
+                        "round_success_probabilities": [
+                            0.8528
+                        ]
+                    },
+                    {
+                        "edge": [
+                            1,
+                            2
+                        ],
+                        "rounds": 1,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.9099437148217636,
+                        "expected_raw_pairs": 2.345215759849906,
+                        "round_success_probabilities": [
+                            0.8528
+                        ]
+                    },
+                    {
+                        "edge": [
+                            0,
+                            1
+                        ],
+                        "rounds": 2,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.9343557186787026,
+                        "expected_raw_pairs": 5.2871738914790205,
+                        "round_success_probabilities": [
+                            0.8528,
+                            0.8871339615402215
+                        ]
+                    }
+                ],
+                "link_consumption_factors": {
+                    "6-7": 2.345215759849906,
+                    "2-6": 2.345215759849906,
+                    "1-2": 2.345215759849906,
+                    "0-1": 5.2871738914790205
+                },
+                "objective_cost": 12.322821171028739,
+                "total_expected_raw_link_pairs": 12.322821171028739,
+                "admissible": true
+            },
+            "allocated_end_to_end_rate": 0.9166666666666667,
+            "expected_elementary_rate_by_link": {
+                "6-7": 8.200764134200085,
+                "2-6": 8.200764134200085,
+                "1-2": 8.200764134200085,
+                "0-1": 18.488220471149834
+            }
+        },
+        {
+            "demand_index": 5,
+            "source": 7,
+            "target": 9,
+            "path_index": 0,
+            "path": [
+                [
+                    7,
+                    4
+                ],
+                [
+                    4,
+                    9
+                ]
+            ],
+            "hop_count": 2,
+            "swap_count": 1,
+            "swap_success_probability": 0.64,
+            "edge_capacity_consumption_factors": {
+                "4-7": 1.5625,
+                "4-9": 1.5625
+            },
+            "objective_coefficient": 3.125,
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.7791999999999999,
+            "purification_profile": {
+                "path": [
+                    7,
+                    4,
+                    9
+                ],
+                "target_fidelity": 0.7,
+                "estimated_path_fidelity": 0.7791999999999999,
+                "link_profiles": [
+                    {
+                        "edge": [
+                            4,
+                            7
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    },
+                    {
+                        "edge": [
+                            4,
+                            9
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    }
+                ],
+                "link_consumption_factors": {
+                    "4-7": 1.0,
+                    "4-9": 1.0
+                },
+                "objective_cost": 2.0,
+                "total_expected_raw_link_pairs": 2.0,
+                "admissible": true
+            },
+            "allocated_end_to_end_rate": 0.7857142857142858,
+            "expected_elementary_rate_by_link": {
+                "4-7": 1.2276785714285716,
+                "4-9": 1.2276785714285716
+            }
+        },
+        {
+            "demand_index": 6,
+            "source": 3,
+            "target": 8,
+            "path_index": 0,
+            "path": [
+                [
+                    3,
+                    2
+                ],
+                [
+                    2,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ]
+            ],
+            "hop_count": 3,
+            "swap_count": 2,
+            "swap_success_probability": 0.4096,
+            "edge_capacity_consumption_factors": {
+                "2-3": 2.44140625,
+                "1-2": 2.44140625,
+                "1-8": 5.7256244136960595
+            },
+            "objective_coefficient": 10.60843691369606,
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.7156562851782364,
+            "purification_profile": {
+                "path": [
+                    3,
+                    2,
+                    1,
+                    8
+                ],
+                "target_fidelity": 0.7,
+                "estimated_path_fidelity": 0.7156562851782364,
+                "link_profiles": [
+                    {
+                        "edge": [
+                            2,
+                            3
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    },
+                    {
+                        "edge": [
+                            1,
+                            2
+                        ],
+                        "rounds": 0,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.88,
+                        "expected_raw_pairs": 1.0,
+                        "round_success_probabilities": []
+                    },
+                    {
+                        "edge": [
+                            1,
+                            8
+                        ],
+                        "rounds": 1,
+                        "initial_fidelity": 0.88,
+                        "output_fidelity": 0.9099437148217636,
+                        "expected_raw_pairs": 2.345215759849906,
+                        "round_success_probabilities": [
+                            0.8528
+                        ]
+                    }
+                ],
+                "link_consumption_factors": {
+                    "2-3": 1.0,
+                    "1-2": 1.0,
+                    "1-8": 2.345215759849906
+                },
+                "objective_cost": 4.345215759849906,
+                "total_expected_raw_link_pairs": 4.345215759849906,
+                "admissible": true
+            },
+            "allocated_end_to_end_rate": 1.0,
+            "expected_elementary_rate_by_link": {
+                "2-3": 2.44140625,
+                "1-2": 2.44140625,
+                "1-8": 5.7256244136960595
+            }
+        }
+    ],
+    "link_statistics": [
+        {
+            "edge": [
+                0,
+                1
+            ],
+            "capacity_pairs_per_second": 175.87939698492463,
+            "load_pairs_per_second": 22.319600679483166,
+            "utilization": 0.12690287243477572,
+            "residual_capacity_pairs_per_second": 153.55979630544147
+        },
+        {
+            "edge": [
+                1,
+                2
+            ],
+            "capacity_pairs_per_second": 145.32663316582915,
+            "load_pairs_per_second": 10.642170384200085,
+            "utilization": 0.07322931903374194,
+            "residual_capacity_pairs_per_second": 134.68446278162907
+        },
+        {
+            "edge": [
+                1,
+                4
+            ],
+            "capacity_pairs_per_second": 89.2462311557789,
+            "load_pairs_per_second": 1.9097222222222223,
+            "utilization": 0.021398351476476476,
+            "residual_capacity_pairs_per_second": 87.33650893355667
+        },
+        {
+            "edge": [
+                1,
+                8
+            ],
+            "capacity_pairs_per_second": 103.31658291457288,
+            "load_pairs_per_second": 9.557004622029392,
+            "utilization": 0.09250213617625724,
+            "residual_capacity_pairs_per_second": 93.75957829254348
+        },
+        {
+            "edge": [
+                2,
+                3
+            ],
+            "capacity_pairs_per_second": 168.5427135678392,
+            "load_pairs_per_second": 2.44140625,
+            "utilization": 0.014485385919797257,
+            "residual_capacity_pairs_per_second": 166.1013073178392
+        },
+        {
+            "edge": [
+                2,
+                6
+            ],
+            "capacity_pairs_per_second": 137.0854271356784,
+            "load_pairs_per_second": 8.200764134200085,
+            "utilization": 0.05982228968862965,
+            "residual_capacity_pairs_per_second": 128.88466300147832
+        },
+        {
+            "edge": [
+                3,
+                4
+            ],
+            "capacity_pairs_per_second": 136.78391959798995,
+            "load_pairs_per_second": 0.0,
+            "utilization": 0.0,
+            "residual_capacity_pairs_per_second": 136.78391959798995
+        },
+        {
+            "edge": [
+                3,
+                6
+            ],
+            "capacity_pairs_per_second": 161.3065326633166,
+            "load_pairs_per_second": 0.0,
+            "utilization": 0.0,
+            "residual_capacity_pairs_per_second": 161.3065326633166
+        },
+        {
+            "edge": [
+                4,
+                5
+            ],
+            "capacity_pairs_per_second": 115.37688442211056,
+            "load_pairs_per_second": 1.9097222222222223,
+            "utilization": 0.016552034939992258,
+            "residual_capacity_pairs_per_second": 113.46716219988834
+        },
+        {
+            "edge": [
+                4,
+                7
+            ],
+            "capacity_pairs_per_second": 97.58793969849246,
+            "load_pairs_per_second": 1.2276785714285716,
+            "utilization": 0.01258022840959247,
+            "residual_capacity_pairs_per_second": 96.3602611270639
+        },
+        {
+            "edge": [
+                4,
+                9
+            ],
+            "capacity_pairs_per_second": 45.628140703517595,
+            "load_pairs_per_second": 1.2276785714285716,
+            "utilization": 0.026906171334172436,
+            "residual_capacity_pairs_per_second": 44.400462132089025
+        },
+        {
+            "edge": [
+                6,
+                7
+            ],
+            "capacity_pairs_per_second": 113.56783919597991,
+            "load_pairs_per_second": 8.200764134200085,
+            "utilization": 0.07221026826131932,
+            "residual_capacity_pairs_per_second": 105.36707506177983
+        },
+        {
+            "edge": [
+                6,
+                9
+            ],
+            "capacity_pairs_per_second": 20.90452261306533,
+            "load_pairs_per_second": 0.8800000000000001,
+            "utilization": 0.042096153846153846,
+            "residual_capacity_pairs_per_second": 20.02452261306533
+        },
+        {
+            "edge": [
+                8,
+                9
+            ],
+            "capacity_pairs_per_second": 146.53266331658293,
+            "load_pairs_per_second": 6.298186855065666,
+            "utilization": 0.042981453503363076,
+            "residual_capacity_pairs_per_second": 140.23447646151726
+        }
+    ],
+    "fidelity_profiles": [
+        {
+            "demand_index": 0,
+            "path_index": 0,
+            "source": 0,
+            "target": 9,
+            "edge_path": [
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ],
+                [
+                    8,
+                    9
+                ]
+            ],
+            "path": [
+                0,
+                1,
+                8,
+                9
+            ],
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.7156562851782364,
+            "link_profiles": [
+                {
+                    "edge": [
+                        0,
+                        1
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                },
+                {
+                    "edge": [
+                        1,
+                        8
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                },
+                {
+                    "edge": [
+                        8,
+                        9
+                    ],
+                    "rounds": 1,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.9099437148217636,
+                    "expected_raw_pairs": 2.345215759849906,
+                    "round_success_probabilities": [
+                        0.8528
+                    ]
+                }
+            ],
+            "link_consumption_factors": {
+                "0-1": 1.0,
+                "1-8": 1.0,
+                "8-9": 2.345215759849906
+            },
+            "objective_cost": 4.345215759849906,
+            "total_expected_raw_link_pairs": 4.345215759849906,
+            "admissible": true
+        },
+        {
+            "demand_index": 1,
+            "path_index": 0,
+            "source": 0,
+            "target": 8,
+            "edge_path": [
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ]
+            ],
+            "path": [
+                0,
+                1,
+                8
+            ],
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.7791999999999999,
+            "link_profiles": [
+                {
+                    "edge": [
+                        0,
+                        1
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                },
+                {
+                    "edge": [
+                        1,
+                        8
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                }
+            ],
+            "link_consumption_factors": {
+                "0-1": 1.0,
+                "1-8": 1.0
+            },
+            "objective_cost": 2.0,
+            "total_expected_raw_link_pairs": 2.0,
+            "admissible": true
+        },
+        {
+            "demand_index": 2,
+            "path_index": 0,
+            "source": 6,
+            "target": 9,
+            "edge_path": [
+                [
+                    6,
+                    9
+                ]
+            ],
+            "path": [
+                6,
+                9
+            ],
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.88,
+            "link_profiles": [
+                {
+                    "edge": [
+                        6,
+                        9
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                }
+            ],
+            "link_consumption_factors": {
+                "6-9": 1.0
+            },
+            "objective_cost": 1.0,
+            "total_expected_raw_link_pairs": 1.0,
+            "admissible": true
+        },
+        {
+            "demand_index": 3,
+            "path_index": 0,
+            "source": 5,
+            "target": 1,
+            "edge_path": [
+                [
+                    5,
+                    4
+                ],
+                [
+                    4,
+                    1
+                ]
+            ],
+            "path": [
+                5,
+                4,
+                1
+            ],
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.7791999999999999,
+            "link_profiles": [
+                {
+                    "edge": [
+                        4,
+                        5
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                },
+                {
+                    "edge": [
+                        1,
+                        4
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                }
+            ],
+            "link_consumption_factors": {
+                "4-5": 1.0,
+                "1-4": 1.0
+            },
+            "objective_cost": 2.0,
+            "total_expected_raw_link_pairs": 2.0,
+            "admissible": true
+        },
+        {
+            "demand_index": 4,
+            "path_index": 0,
+            "source": 7,
+            "target": 0,
+            "edge_path": [
+                [
+                    7,
+                    6
+                ],
+                [
+                    6,
+                    2
+                ],
+                [
+                    2,
+                    1
+                ],
+                [
+                    1,
+                    0
+                ]
+            ],
+            "path": [
+                7,
+                6,
+                2,
+                1,
+                0
+            ],
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.716249953781153,
+            "link_profiles": [
+                {
+                    "edge": [
+                        6,
+                        7
+                    ],
+                    "rounds": 1,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.9099437148217636,
+                    "expected_raw_pairs": 2.345215759849906,
+                    "round_success_probabilities": [
+                        0.8528
+                    ]
+                },
+                {
+                    "edge": [
+                        2,
+                        6
+                    ],
+                    "rounds": 1,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.9099437148217636,
+                    "expected_raw_pairs": 2.345215759849906,
+                    "round_success_probabilities": [
+                        0.8528
+                    ]
+                },
+                {
+                    "edge": [
+                        1,
+                        2
+                    ],
+                    "rounds": 1,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.9099437148217636,
+                    "expected_raw_pairs": 2.345215759849906,
+                    "round_success_probabilities": [
+                        0.8528
+                    ]
+                },
+                {
+                    "edge": [
+                        0,
+                        1
+                    ],
+                    "rounds": 2,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.9343557186787026,
+                    "expected_raw_pairs": 5.2871738914790205,
+                    "round_success_probabilities": [
+                        0.8528,
+                        0.8871339615402215
+                    ]
+                }
+            ],
+            "link_consumption_factors": {
+                "6-7": 2.345215759849906,
+                "2-6": 2.345215759849906,
+                "1-2": 2.345215759849906,
+                "0-1": 5.2871738914790205
+            },
+            "objective_cost": 12.322821171028739,
+            "total_expected_raw_link_pairs": 12.322821171028739,
+            "admissible": true
+        },
+        {
+            "demand_index": 5,
+            "path_index": 0,
+            "source": 7,
+            "target": 9,
+            "edge_path": [
+                [
+                    7,
+                    4
+                ],
+                [
+                    4,
+                    9
+                ]
+            ],
+            "path": [
+                7,
+                4,
+                9
+            ],
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.7791999999999999,
+            "link_profiles": [
+                {
+                    "edge": [
+                        4,
+                        7
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                },
+                {
+                    "edge": [
+                        4,
+                        9
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                }
+            ],
+            "link_consumption_factors": {
+                "4-7": 1.0,
+                "4-9": 1.0
+            },
+            "objective_cost": 2.0,
+            "total_expected_raw_link_pairs": 2.0,
+            "admissible": true
+        },
+        {
+            "demand_index": 6,
+            "path_index": 0,
+            "source": 3,
+            "target": 8,
+            "edge_path": [
+                [
+                    3,
+                    2
+                ],
+                [
+                    2,
+                    1
+                ],
+                [
+                    1,
+                    8
+                ]
+            ],
+            "path": [
+                3,
+                2,
+                1,
+                8
+            ],
+            "target_fidelity": 0.7,
+            "estimated_path_fidelity": 0.7156562851782364,
+            "link_profiles": [
+                {
+                    "edge": [
+                        2,
+                        3
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                },
+                {
+                    "edge": [
+                        1,
+                        2
+                    ],
+                    "rounds": 0,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.88,
+                    "expected_raw_pairs": 1.0,
+                    "round_success_probabilities": []
+                },
+                {
+                    "edge": [
+                        1,
+                        8
+                    ],
+                    "rounds": 1,
+                    "initial_fidelity": 0.88,
+                    "output_fidelity": 0.9099437148217636,
+                    "expected_raw_pairs": 2.345215759849906,
+                    "round_success_probabilities": [
+                        0.8528
+                    ]
+                }
+            ],
+            "link_consumption_factors": {
+                "2-3": 1.0,
+                "1-2": 1.0,
+                "1-8": 2.345215759849906
+            },
+            "objective_cost": 4.345215759849906,
+            "total_expected_raw_link_pairs": 4.345215759849906,
+            "admissible": true
+        }
+    ]
+}

@@ -1,0 +1,28 @@
+{
+    "node_a": "nice",
+    "node_b": "valrose",
+    "observation_time_s": 9.95,
+    "eg_attempts": 144045,
+    "eg_successes": 1750,
+    "observed_creations": 1750,
+    "p_generation": 0.012148981221146169,
+    "attempt_rate_per_second": 14476.884422110554,
+    "raw_creation_rate_pairs_per_second": 175.87939698492463,
+    "completed_pair_records": 1750,
+    "average_observed_lifetime_s": 0.0,
+    "simulation_duration_s": 10.0,
+    "setup_margin_s": 0.05,
+    "active_duration_s": 9.95,
+    "delivered_pairs": 1750,
+    "service_capacity_pairs_per_second": 175.87939698492463,
+    "traffic": {
+        "reservation_start_s": 0.05,
+        "reservation_end_s": 10.0,
+        "reserved_memories": 10,
+        "target_fidelity": 0.5
+    },
+    "application_results": {
+        "reservation_approved": true,
+        "delivered_pairs": 1750
+    }
+}

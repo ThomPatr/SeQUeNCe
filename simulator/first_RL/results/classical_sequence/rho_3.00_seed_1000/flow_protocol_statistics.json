@@ -1,0 +1,236 @@
+[
+    {
+        "source": "antibes",
+        "destination": "monaco",
+        "swapping": {
+            "attempts": 4185,
+            "successes": 2639,
+            "failures": 1546,
+            "success_probability": 0.6305854241338112,
+            "nodes": {
+                "cagnes": {
+                    "attempts": 2908,
+                    "successes": 1843,
+                    "failures": 1065,
+                    "candidates": 0
+                },
+                "nice": {
+                    "attempts": 1277,
+                    "successes": 796,
+                    "failures": 481,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    },
+    {
+        "source": "cannes",
+        "destination": "menton",
+        "swapping": {
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "nodes": {}
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    },
+    {
+        "source": "ecov",
+        "destination": "menton",
+        "swapping": {
+            "attempts": 553,
+            "successes": 351,
+            "failures": 202,
+            "success_probability": 0.6347197106690777,
+            "nodes": {
+                "sophia": {
+                    "attempts": 553,
+                    "successes": 351,
+                    "failures": 202,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    },
+    {
+        "source": "ecov",
+        "destination": "valrose",
+        "swapping": {
+            "attempts": 3228,
+            "successes": 2112,
+            "failures": 1116,
+            "success_probability": 0.654275092936803,
+            "nodes": {
+                "nice": {
+                    "attempts": 1734,
+                    "successes": 1141,
+                    "failures": 593,
+                    "candidates": 0
+                },
+                "cannes": {
+                    "attempts": 948,
+                    "successes": 599,
+                    "failures": 349,
+                    "candidates": 0
+                },
+                "cagnes": {
+                    "attempts": 546,
+                    "successes": 372,
+                    "failures": 174,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    },
+    {
+        "source": "grasse",
+        "destination": "nice",
+        "swapping": {
+            "attempts": 701,
+            "successes": 433,
+            "failures": 268,
+            "success_probability": 0.6176890156918687,
+            "nodes": {
+                "sophia": {
+                    "attempts": 701,
+                    "successes": 433,
+                    "failures": 268,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    },
+    {
+        "source": "valrose",
+        "destination": "menton",
+        "swapping": {
+            "attempts": 1199,
+            "successes": 764,
+            "failures": 435,
+            "success_probability": 0.6371976647206005,
+            "nodes": {
+                "nice": {
+                    "attempts": 774,
+                    "successes": 492,
+                    "failures": 282,
+                    "candidates": 0
+                },
+                "monaco": {
+                    "attempts": 425,
+                    "successes": 272,
+                    "failures": 153,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    },
+    {
+        "source": "valrose",
+        "destination": "monaco",
+        "swapping": {
+            "attempts": 1267,
+            "successes": 810,
+            "failures": 457,
+            "success_probability": 0.6393054459352802,
+            "nodes": {
+                "nice": {
+                    "attempts": 1267,
+                    "successes": 810,
+                    "failures": 457,
+                    "candidates": 0
+                }
+            }
+        },
+        "purification": {
+            "candidates": 0,
+            "attempts": 0,
+            "successes": 0,
+            "failures": 0,
+            "success_probability": 0.0,
+            "input_fidelities": [],
+            "output_fidelities": [],
+            "average_input_fidelity": null,
+            "average_output_fidelity": null,
+            "average_fidelity_gain": null,
+            "nodes": {}
+        }
+    }
+]

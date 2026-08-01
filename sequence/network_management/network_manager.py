@@ -127,7 +127,7 @@ class NetworkManager(ABC):
         Args:
             reservation (Reservation): reservation for which to generate rules.
         """
-        self.owner.resource_manager.generate_load_rules(reservation.path, reservation, self.timecards, self.memory_array_name)
+        self.owner.resource_manager.generate_load_rules(reservation.path, reservation, self.timecards, self.memory_array_name,enable_purification=self.enable_purification, )
 
 @NetworkManager.register('distributed')
 class DistributedNetworkManager(NetworkManager):
@@ -145,6 +145,7 @@ class DistributedNetworkManager(NetworkManager):
         self.protocol_stack = []
         self.forwarding_table = {}
         self.routing_protocol = self._create_routing_protocol(component_templates.get('routing', 'static'))
+        self.enable_purification = True
         # Create and load the stack to protocol_stack
         protocols: list = self.create_stack()
         self.load_stack(protocols)

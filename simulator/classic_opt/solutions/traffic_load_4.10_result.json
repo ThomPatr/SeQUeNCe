@@ -1,0 +1,6 @@
+{
+    "feasible": false,
+    "status_code": 103,
+    "status": "integer infeasible",
+    "reason": "The traffic matrix is not feasible under the link and node-memory capacities."
+}

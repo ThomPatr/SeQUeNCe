@@ -1,0 +1,47 @@
+{
+    "minimum_samples": 20,
+    "global_average_holding_time_s": 0.02241737494106728,
+    "node_fallbacks": {
+        "antibes": {
+            "samples": 2583,
+            "average_holding_time_s": 0.022015137478230352
+        },
+        "cagnes": {
+            "samples": 8775,
+            "average_holding_time_s": 0.012526908916252992
+        },
+        "cannes": {
+            "samples": 3490,
+            "average_holding_time_s": 0.019240903636399714
+        },
+        "ecov": {
+            "samples": 2774,
+            "average_holding_time_s": 0.03798049786703929
+        },
+        "grasse": {
+            "samples": 2031,
+            "average_holding_time_s": 0.03610186750045101
+        },
+        "menton": {
+            "samples": 2383,
+            "average_holding_time_s": 0.03330068034567394
+        },
+        "monaco": {
+            "samples": 3820,
+            "average_holding_time_s": 0.023814747471397904
+        },
+        "nice": {
+            "samples": 13752,
+            "average_holding_time_s": 0.016266541937525667
+        },
+        "sophia": {
+            "samples": 5544,
+            "average_holding_time_s": 0.02711179317478301
+        },
+        "valrose": {
+            "samples": 4713,
+            "average_holding_time_s": 0.03413728097432251
+        }
+    },
+    "flows": {}
+}

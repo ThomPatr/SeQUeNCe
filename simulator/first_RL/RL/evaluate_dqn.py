@@ -2,7 +2,6 @@ from stable_baselines3 import DQN
 
 from simulator.first_RL.RL.quantum_swap_env import QuantumSwapEnv, WAIT, SWAP
 
-
 ACTION_NAMES = {
     WAIT: "WAIT",
     SWAP: "SWAP",
@@ -10,7 +9,7 @@ ACTION_NAMES = {
 
 
 def main():
-    model = DQN.load("simulator/first_RL/RL/dqn_wait_swap")
+    model = DQN.load("dqn_wait_swap")
 
     env = QuantumSwapEnv(
         target_fidelity=0.75,
@@ -32,20 +31,21 @@ def main():
 
             next_obs, reward, terminated, truncated, info = env.step(int(action))
 
-            f_left = obs[0]
-            f_right = obs[1]
-            ttl_left = obs[2]
-            ttl_right = obs[3]
-            free_mem = obs[4]
-            predicted_f = info["predicted_fidelity"]
-            residual_ttl = info["residual_ttl"]
+            min_ttl = obs[0]
+            ttl_imbalance = obs[1]
+            free_mem = obs[2]
+            eg_left = obs[3]
+            eg_right = obs[4]
 
             print(
                 f"step={step:02d} | "
-                f"F_left={f_left:.3f}, F_right={f_right:.3f}, "
-                f"TTL_left={ttl_left:.3f}, TTL_right={ttl_right:.3f}, "
-                f"free_mem={free_mem:.3f} | "
-                f"pred_F={predicted_f:.3f}, res_TTL={residual_ttl:.3f} | "
+                f"min_TTL={min_ttl:.3f}, "
+                f"ttl_imbalance={ttl_imbalance:.3f}, "
+                f"free_mem={free_mem:.3f}, "
+                f"eg_left={eg_left:.3f}, "
+                f"eg_right={eg_right:.3f} | "
+                f"hidden_quality={info['hidden_swap_quality']:.3f}, "
+                f"target={info['target_fidelity']:.3f} | "
                 f"action={ACTION_NAMES[int(action)]} | "
                 f"reward={reward:.3f}"
             )

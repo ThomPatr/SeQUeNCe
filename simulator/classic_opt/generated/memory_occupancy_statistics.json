@@ -1,0 +1,88 @@
+{
+    "total_completed_records": 66054,
+    "censored_records_at_simulation_end": 26,
+    "global_average_holding_time_s": 0.021464579768999226,
+    "node_statistics": [
+        {
+            "node": "antibes",
+            "samples": 4058,
+            "average_holding_time_s": 0.022385371532714884,
+            "median_holding_time_s": 0.0213642,
+            "p95_holding_time_s": 0.05150511055539999,
+            "maximum_holding_time_s": 0.073697110791
+        },
+        {
+            "node": "cagnes",
+            "samples": 11980,
+            "average_holding_time_s": 0.011061766219059849,
+            "median_holding_time_s": 0.0027687,
+            "p95_holding_time_s": 0.047182833197099996,
+            "maximum_holding_time_s": 0.077545950478
+        },
+        {
+            "node": "cannes",
+            "samples": 3396,
+            "average_holding_time_s": 0.01698587131994729,
+            "median_holding_time_s": 0.0088301,
+            "p95_holding_time_s": 0.050122642840250003,
+            "maximum_holding_time_s": 0.07193571534
+        },
+        {
+            "node": "ecov",
+            "samples": 2058,
+            "average_holding_time_s": 0.03162899884687026,
+            "median_holding_time_s": 0.031203902595,
+            "p95_holding_time_s": 0.07122483144149998,
+            "maximum_holding_time_s": 0.100495213844
+        },
+        {
+            "node": "grasse",
+            "samples": 2928,
+            "average_holding_time_s": 0.035871535656838115,
+            "median_holding_time_s": 0.03806696629799999,
+            "p95_holding_time_s": 0.0658749406133,
+            "maximum_holding_time_s": 0.09189526595
+        },
+        {
+            "node": "menton",
+            "samples": 2326,
+            "average_holding_time_s": 0.03317116307667842,
+            "median_holding_time_s": 0.0353123507425,
+            "p95_holding_time_s": 0.053655337815250004,
+            "maximum_holding_time_s": 0.076148768822
+        },
+        {
+            "node": "monaco",
+            "samples": 6392,
+            "average_holding_time_s": 0.02357324189290879,
+            "median_holding_time_s": 0.0195757079815,
+            "p95_holding_time_s": 0.059720557118949996,
+            "maximum_holding_time_s": 0.090731900909
+        },
+        {
+            "node": "nice",
+            "samples": 20153,
+            "average_holding_time_s": 0.01749884204598566,
+            "median_holding_time_s": 0.0066646,
+            "p95_holding_time_s": 0.05990977376619999,
+            "maximum_holding_time_s": 0.093256907525
+        },
+        {
+            "node": "sophia",
+            "samples": 5896,
+            "average_holding_time_s": 0.024156237963403323,
+            "median_holding_time_s": 0.013802705222,
+            "p95_holding_time_s": 0.070684348575,
+            "maximum_holding_time_s": 0.096852069593
+        },
+        {
+            "node": "valrose",
+            "samples": 6867,
+            "average_holding_time_s": 0.03549403957535416,
+            "median_holding_time_s": 0.040235480007,
+            "p95_holding_time_s": 0.0637377758973,
+            "maximum_holding_time_s": 0.085365612845
+        }
+    ],
+    "flow_node_statistics": []
+}
